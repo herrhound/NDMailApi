@@ -1,6 +1,10 @@
 import sbt._
 import Keys._
 
+import com.typesafe.sbt.SbtStartScript
+
+seq(SbtStartScript.startScriptForClassesSettings: _*)
+
 name := "NDMailApi"
 
 version := "0.1"
@@ -10,10 +14,6 @@ scalaVersion := "2.10.0"
 resolvers += "spray" at "http://repo.spray.io/"
 
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
-
-resolvers += Classpaths.typesafeReleases
-
-addSbtPlugin("com.typesafe.startscript" % "xsbt-start-script-plugin" % "0.5.3")
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka"   %% "akka-actor"         % "2.3.2",
