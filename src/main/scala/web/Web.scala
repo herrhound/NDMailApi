@@ -10,7 +10,8 @@ trait Web {
 
   val host = system.settings.config.getString("NDMailApi.interface")
   val alternativePort = system.settings.config.getInt("NDMailApi.port")
-  val port = Option(System.getenv("PORT")).getOrElse(alternativePort).toString.toInt
+  //val port = Option(System.getenv("PORT")).getOrElse(alternativePort).toString.toInt
+  val port = scala.util.Properties.envOrElse("PORT", "8080").toInt
 
   IO(Http) ! Http.Bind(rootService, host, port)
 }
