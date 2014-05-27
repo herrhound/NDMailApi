@@ -14,6 +14,6 @@ object NDMailRestApi extends App with Core with CoreActors with Api with Web {
   //logger.debug("Hit any key to stop the service.")
   println("Hit any key to stop the service!!!")
   val result = readLine()
-  system.shutdown()
+  //system.shutdown()
 }
 //with Boot //with CoreActors
