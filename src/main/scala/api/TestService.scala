@@ -28,8 +28,8 @@ class TestService(system:ActorSystem, testing: ActorRef)(implicit context: Execu
   implicit val NDResponseFormater = jsonFormat3(NDApiResponse[Person])
 
 
-  //http GET http://localhost:8080/test
-  //http GET http://localhost:8080/person < person_wrong_auth.json
+  //http GET http://dry-atoll-6423.herokuapp.com/test
+  //http GET http://dry-atoll-6423.herokuapp.com/person < person_wrong_auth.json
   //http GET http://localhost:8080/person < person_auth_ok.json
 
   val route =
