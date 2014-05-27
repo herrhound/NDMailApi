@@ -1,1 +1,1 @@
-web: target/start Web -spray.port=$PORT
+web: target/start Web

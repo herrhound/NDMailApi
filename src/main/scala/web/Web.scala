@@ -12,5 +12,5 @@ trait Web {
   val host = system.settings.config.getString("NDMailApi.interface")
   val port = Properties.envOrElse("PORT", "8080").toInt
   println(port)
-  IO(Http) ! Http.Bind(rootService, host, port)
+  IO(Http) ! Http.Bind(rootService, "0.0.0.0", port)
 }
