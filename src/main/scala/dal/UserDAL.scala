@@ -1,29 +1,16 @@
 package dal
 
+import scala.slick.driver.PostgresDriver.simple._
+import models.auth._
 import java.util.UUID
-import utils._
-import models.auth.User
-import scala.slick.profile
 
-/*
-object DAL extends {
-  val profile = scala.slick.driver.PostgresDriver
-} with tables
-*/
-/*
-case class Page[A] (items: Seq[A], page: Int, offset: Long, total: Long) {
-  lazy val prev = Option(page - 1).filter(_ >= 0)
-  lazy val next = Option(page + 1).filter(_ => (offset + items.size) < total)
-}
+/**
+ * Created by AMoroz on 20/05/2014.
+ */
 
+trait Users {
+  this: Profile =>
 
-trait tables extends Profile with NDApiLogging{
-  //val profile: scala.slick.driver.PostgresDriver
-  //import profile.simple._
-  import scala.slick.jdbc.{GetResult => GR}
-
-
-  /** Table description of table user. Objects of this class serve as prototypes for rows in queries. */
   class UserTable(tag: Tag) extends Table[User](tag, Some("auth"), "user") {
     def * = (userid, username, userpassword, email, secretquestion, secretanswer, transactionid, systemstatusid) <> (User.tupled, User.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
@@ -84,7 +71,5 @@ trait tables extends Profile with NDApiLogging{
       row => (row.userid, row.username, row.userpassword, row.email, row.secretquestion, row.secretanswer, row.transactionid, row.systemstatusid))
     val totalRows = count(filter)
     Page(result, page, offset, totalRows)
- }
-
+  }
 }
-*/

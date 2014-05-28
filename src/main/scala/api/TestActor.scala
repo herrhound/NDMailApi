@@ -1,11 +1,13 @@
 package api
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{ActorSystem, Actor, ActorLogging}
 import spray.routing.{Directives, HttpService}
 import models.{ErrorStatus, NDApiResponse, Person}
 import utils.NDApiLogging
+import dal.{dao, Profile, Users}
+import models.auth._
 
-object TestActor extends NDApiLogging {
+object TestActor extends Users with Profile with NDApiLogging {
   //case class Test
   //case class GetPerson(personId: Int)
 
@@ -42,21 +44,24 @@ object TestActor extends NDApiLogging {
     }
   }
 
+  def TestFunc(system: ActorSystem, email: String) = {
+    val database = dao.GetDataBase(system)
+    val user = database.withSession{
+      session => findByEmail(email) (session)
+    }
+    user
+  }
 
 }
 
 class TestActor extends Actor
 {
   import TestActor._
-  /*
-  def GetPersonById(personId: Int) = {
-    val person: Person = new Person(1)
-    person
-  }
-  */
 
+  val system = ActorSystem()
 
   def receive = {
+    case x: String => sender ! TestFunc(system, x)
     case x: Int => sender ! GetPerson(x)
   }
 
