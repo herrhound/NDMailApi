@@ -1,6 +1,7 @@
 import akka.actor.{ActorSystem}
 import api.Api
 import core.{Core, CoreActors}
+import org.slf4j.LoggerFactory
 import web.Web
 
 /**
@@ -9,10 +10,10 @@ import web.Web
 object NDMailRestApi extends App with Core with CoreActors with Api with Web {
 
   implicit lazy val system = ActorSystem("NDMailApi")
-
-  //val logger = LoggerFactory.getLogger(this.getClass)
+   //val logger = LoggerFactory.getLogger(this.getClass)
   //logger.debug("Hit any key to stop the service.")
   println("Hit any key to stop the service!!!")
+  println("Uptime : " + system.uptime)
   val result = readLine()
   system.shutdown()
 }
