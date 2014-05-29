@@ -5,14 +5,16 @@ import models.ndapidtos.{RegisterModel, DeviceRegisterModel}
 import utils.{NDApiLogging}
 import models.{ErrorStatus, NDApiResponse}
 import scala.slick.driver.PostgresDriver.simple._
-import dal.{Profile, Users, dao}
+import dal.{Profile, Users, UserDevicesDAL, dao}
 import models.auth._
 import utils._
+import java.util.UUID
+import org.joda.time.DateTime
 
 /**
  * Created by nikolatonkev on 2014-05-20.
  */
-object RegisterActor extends Users with Profile with NDApiLogging with NDApiUtil {
+object RegisterActor extends Users with UserDevicesDAL with Profile with NDApiLogging with NDApiUtil {
 
   def UserExist(email: String, database: Database): Boolean = {
     val user = database.withSession {
@@ -20,6 +22,14 @@ object RegisterActor extends Users with Profile with NDApiLogging with NDApiUtil
     }
 
     !user.equals(None)
+  }
+
+  def UserDeviceExist(userId: UUID, deviceId: UUID, database: Database): Boolean = {
+    val mapping: UserDevices = database.withSession {
+      session => findMapping(userId, deviceId)(session).asInstanceOf[UserDevices]
+    }
+
+    !mapping.equals(None)
   }
 
   def RegisterUser(model: DeviceRegisterModel, database: Database): Boolean = {
@@ -40,8 +50,19 @@ object RegisterActor extends Users with Profile with NDApiLogging with NDApiUtil
   def RegisterDevice(system: ActorSystem, model: DeviceRegisterModel): Boolean = {
     try {
       val database = dao.GetDataBase(system)
-      if(!UserExist(model.email, database)){
-        RegisterUser(model, database)
+      if(!UserExist(model.email, database)) {
+        val a = RegisterUser(model, database)
+        val user = database.withSession{session => findByEmail(model.email)(session).asInstanceOf[User]}
+
+        if(!user.equals(None)){
+          val bb = UserDeviceExist(user.userid, java.util.UUID.fromString(model.deviceUniqueId), database)
+          if(!bb){
+            val userdevice = new UserDevices(0, user.userid, java.util.UUID.fromString(model.deviceUniqueId), GetNewUUID, DateTime.now())
+            val b = database.withSession { session => insert(userdevice)(session) }
+
+          }
+        }
+        true
       }
       else
       {
