@@ -3,7 +3,7 @@ import Keys._
 
 import com.typesafe.sbt.SbtStartScript
 
-seq(SbtStartScript.startScriptForClassesSettings: _*)
+//seq(SbtStartScript.startScriptForClassesSettings: _*)
 
 name := "NDMailApi"
 
@@ -23,5 +23,8 @@ libraryDependencies ++= Seq(
   "io.spray"             % "spray-routing"      % "1.3.1",
   "io.spray"            %% "spray-json"         % "1.2.6",
   "org.postgresql"       % "postgresql"         % "9.2-1003-jdbc4",
-  "com.typesafe.slick"  %% "slick"              % "2.0.2"
+  "com.typesafe.slick"  %% "slick"              % "2.0.2",
+  "joda-time"            % "joda-time"          % "2.3",
+  "org.joda"             % "joda-convert"       % "1.5",
+  "com.github.tototoshi" %% "slick-joda-mapper" % "1.1.0"
 )
