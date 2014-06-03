@@ -6,6 +6,7 @@ import java.util.UUID
 import models._
 import org.joda.time._
 import com.github.tototoshi.slick.H2JodaSupport._
+import scala.slick.driver.PostgresDriver
 
 
 /**
@@ -14,18 +15,20 @@ import com.github.tototoshi.slick.H2JodaSupport._
 trait UserDevicesDAL extends Users {
   this: Profile =>
 
-  class UserDevicesTable(tag: Tag) extends Table[UserDevices](tag, Some("auth"), "userdevices") {
-    def * = (userdevicesid, userid, deviceid, authguid) <> (UserDevices.tupled, UserDevices.unapply)
-    /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (userdevicesid.?, userid.?, deviceid.?, authguid.?).shaped.<>({r=>import r._; _1.map(_=> UserDevices.tupled((_1.get, _2.get, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+case class UserDevicesTable(tag: Tag) extends Table[UserDevices](tag, Some("auth"), "userdevices") {
 
-    val userdevicesid: Column[Int] = column[Int]("userdevicesid", O.PrimaryKey)
-    val userid: Column[UUID] = column[UUID]("userid")
-    val deviceid: Column[UUID] = column[UUID]("deviceid")
-    val authguid: Column[UUID] = column[UUID]("authguid")
+  def userdevicesid = column[Int]("userdevicesid", O.PrimaryKey, O.AutoInc)
+  def userid = column[UUID]("userid", O.NotNull)
+  def deviceid = column[UUID]("deviceid", O.NotNull)
+  def authguid = column[UUID]("authguid", O.NotNull)
     //val expiredate: Column[DateTime] = column[DateTime]("expiredate")
 
-    def user = foreignKey("userdevices_userid_fkey", userid, users)(_.userid)
+  def * = (userdevicesid.?, userid, deviceid, authguid) <> (UserDevices.tupled, UserDevices.unapply)
+
+  /** Maps whole row to an option. Useful for outer joins. */
+  //def ? = (userdevicesid.?, userid, deviceid, authguid).shaped.<>({r=>import r._; _1.map(_=> UserDevices.tupled((_1.get, _2, _3, _4)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+  def user = foreignKey("userdevices_userid_fkey", userid, users)(_.userid)
   }
 
   val userdevices = TableQuery[UserDevicesTable]
@@ -36,8 +39,11 @@ trait UserDevicesDAL extends Users {
     userdevices.where(_.userid === uid).firstOption
   }
 
-  def insert(ud : UserDevices)(implicit s: Session) {
-    userdevices.insert(ud)
+  def withSession(function: (Nothing) => PostgresDriver.InsertInvoker[UserDevicesTable#TableElementType]#SingleInsertResult): Int = ???
+
+  def insert(ud : UserDevices)(implicit s: Session): Int = {
+    //userdevices.insert(ud)
+    userdevices.map(s => (s.userid, s.deviceid, s.authguid)).insert(ud.userid, ud.deviceid, ud.authguid)
   }
   /*
   def delete(id: UUID)(implicit s: Session) {

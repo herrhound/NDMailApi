@@ -86,8 +86,11 @@ object RegisterActor extends Users with UserDevicesDAL with Profile with NDApiLo
           //val mapping: Option[UserDevices]  = GetUserDeviceMapping(userid, java.util.UUID.fromString(model.deviceUniqueId), database)
           //if(mapping.equals(None)){
             val authguidId = GetNewUUID
-            val userdevice = new UserDevices(0, userid, java.util.UUID.fromString(model.deviceUniqueId), authguidId)
-            database.withSession { session => insert(userdevice)(session) }
+            val ud = new UserDevices(None, userid, java.util.UUID.fromString(model.deviceUniqueId), authguidId)
+
+            database.withSession { session => insert(ud)(session) }
+            database.withSession { session => userdevices.map(s => (s.userid, s.deviceid, s.authguid)).insert(ud.userid, ud.deviceid, ud.authguid) (session) }
+
             authguidId.toString()
           //}
           //else{
