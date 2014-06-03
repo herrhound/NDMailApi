@@ -16,6 +16,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
   implicit val DeviceRegisterFormater = jsonFormat2(DeviceRegisterModel)
   implicit val RegisterFormater = jsonFormat5(RegisterModel)
   implicit val NDResponseFormater = jsonFormat3(NDApiResponse[Boolean])
+  implicit val NDRegisterDeviceResponseFormater = jsonFormat3(NDApiResponse[String])
 
   //http PUT http://localhost:8080/register < register.json
   //http PUT http://localhost:8080/registerdevice < registerdevice.json
@@ -36,10 +37,14 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
       entity(as[DeviceRegisterModel]) { ent =>
         put {
           complete {
-            val data = RegisterDevice(system, ent)
-            val response = new NDApiResponse[Boolean](ErrorStatus.None, "", data)
-            response
-            //ent
+            val success = RegisterDevice(system, ent)
+            if(success) {
+              val authguid = MapDevice(system, ent)
+              new NDApiResponse[String](ErrorStatus.None, "", authguid)
+            }
+            else {
+              new NDApiResponse[String](ErrorStatus.None, "", "")
+            }
           }
         }
       }

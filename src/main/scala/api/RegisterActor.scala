@@ -16,6 +16,15 @@ import org.joda.time.DateTime
  */
 object RegisterActor extends Users with UserDevicesDAL with Profile with NDApiLogging with NDApiUtil {
 
+
+  def GetUserByEmail(email: String, database: Database) = {
+    val user = database.withSession {
+      session => findByEmail (email) (session)
+    }
+
+    user
+  }
+
   def UserExist(email: String, database: Database): Boolean = {
     val user = database.withSession {
       session => findByEmail (email) (session)
@@ -24,12 +33,10 @@ object RegisterActor extends Users with UserDevicesDAL with Profile with NDApiLo
     !user.equals(None)
   }
 
-  def UserDeviceExist(userId: UUID, deviceId: UUID, database: Database): Boolean = {
-    val mapping: UserDevices = database.withSession {
-      session => findMapping(userId, deviceId)(session).asInstanceOf[UserDevices]
+  def GetUserDeviceMapping(userId: UUID, deviceId: UUID, database: Database): Option[UserDevices] = {
+    database.withSession {
+      session => findByMapping(userId, deviceId)(session)
     }
-
-    !mapping.equals(None)
   }
 
   def RegisterUser(model: DeviceRegisterModel, database: Database): Boolean = {
@@ -51,18 +58,7 @@ object RegisterActor extends Users with UserDevicesDAL with Profile with NDApiLo
     try {
       val database = dao.GetDataBase(system)
       if(!UserExist(model.email, database)) {
-        val a = RegisterUser(model, database)
-        val user = database.withSession{session => findByEmail(model.email)(session).asInstanceOf[User]}
-
-        if(!user.equals(None)){
-          val bb = UserDeviceExist(user.userid, java.util.UUID.fromString(model.deviceUniqueId), database)
-          if(!bb){
-            val userdevice = new UserDevices(0, user.userid, java.util.UUID.fromString(model.deviceUniqueId), GetNewUUID, DateTime.now())
-            val b = database.withSession { session => insert(userdevice)(session) }
-
-          }
-        }
-        true
+        RegisterUser(model, database)
       }
       else
       {
@@ -77,6 +73,41 @@ object RegisterActor extends Users with UserDevicesDAL with Profile with NDApiLo
     }
 
   }
+
+  def MapDevice(system: ActorSystem, model: DeviceRegisterModel): String = {
+    try {
+      Console.println("In MapDevice...")
+      val database = dao.GetDataBase(system)
+      val user: Option[User] = GetUserByEmail(model.email, database)
+
+      if(!user.equals(None)){
+          //val userid: UUID = user.asInstanceOf[User].userid
+          val userid: UUID = user.get.userid
+          //val mapping: Option[UserDevices]  = GetUserDeviceMapping(userid, java.util.UUID.fromString(model.deviceUniqueId), database)
+          //if(mapping.equals(None)){
+            val authguidId = GetNewUUID
+            val userdevice = new UserDevices(0, userid, java.util.UUID.fromString(model.deviceUniqueId), authguidId)
+            database.withSession { session => insert(userdevice)(session) }
+            authguidId.toString()
+          //}
+          //else{
+          //  mapping.asInstanceOf[UserDevices].authguid.toString()
+          //}
+      }
+      else
+      {
+        ""
+      }
+    }
+    catch {
+      case e: Exception => {
+        errorLogger.error(e.getStackTraceString)
+      }
+      ""
+    }
+  }
+
+
 
   def Register(model: RegisterModel): Boolean = {
     true
