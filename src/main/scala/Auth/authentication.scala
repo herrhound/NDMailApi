@@ -5,12 +5,13 @@ import spray.routing.authentication.Authentication
 import spray.routing.authentication.ContextAuthenticator
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import spray.http._
-import java.util.UUID
 import models.ErrorStatus.ErrorStatus
 import spray.routing.AuthenticationFailedRejection
 import models.AuthTokens
 import spray.routing.AuthenticationFailedRejection._
+import dal.{UserDevicesDAL, dao}
+import models.auth.UserDevice
+import akka.actor.ActorSystem
 
 
 trait AuthenticationDirectives {
@@ -24,13 +25,19 @@ trait AuthenticationDirectives {
 
   private def doAuth(tokens: AuthTokens): Future[Authentication[ErrorStatus]] = {
     Future {
-
       def CheckTokens(tokens: AuthTokens) = {
-        val u1: UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-        val u2: UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440777");
+        //val result = isAuthenticated(tokens)
+        //true
 
-        val result = ((tokens.AuthGuyd.equals(u1)) && (tokens.DeviceUniqueId.equals(u2)))
-        result
+        val system = ActorSystem()
+
+        val database = dao.GetDataBase(system)
+        val success = database.withSession {
+          session => UserDevicesDAL.isAuth(tokens) (session)
+        }
+
+        success
+
       }
 
       /*1

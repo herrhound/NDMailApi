@@ -4,10 +4,10 @@ import akka.actor.{ActorSystem, Actor, ActorLogging}
 import spray.routing.{Directives, HttpService}
 import models.{ErrorStatus, NDApiResponse, Person}
 import utils.NDApiLogging
-import dal.{dao, Profile, Users}
+import dal.{UsersDAL, dao, Profile, Users}
 import models.auth._
 
-object TestActor extends Users with Profile with NDApiLogging {
+object TestActor extends NDApiLogging {
   //case class Test
   //case class GetPerson(personId: Int)
 
@@ -47,7 +47,8 @@ object TestActor extends Users with Profile with NDApiLogging {
   def TestFunc(system: ActorSystem, email: String) = {
     val database = dao.GetDataBase(system)
     val user = database.withSession{
-      session => findByEmail(email) (session)
+      val dal = UsersDAL
+      session => dal.findByEmail(email) (session)
     }
     user
   }
