@@ -99,7 +99,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
         val mapping = GetUserDeviceMapping(userid, deviceid, database)
         if(mapping.equals(None)){
           val authguidId = GetNewUUID
-          val userdevice = new UserDevice(None, userid, deviceid, authguidId) //, None
+          val userdevice = new UserDevice(None, userid, deviceid, authguidId, None)
           database.withSession { session => UserDevicesDAL.insert(userdevice)(session) }
           authguidId.toString()
         }

@@ -4,7 +4,7 @@ import scala.slick.driver.PostgresDriver.simple._
 import models.auth._
 import java.util.UUID
 import org.joda.time._
-import com.github.tototoshi.slick.H2JodaSupport._
+import com.github.tototoshi.slick.PostgresJodaSupport._
 import models.AuthTokens
 
 
@@ -14,7 +14,7 @@ import models.AuthTokens
 
 class UserDevicesTable(tag: Tag) extends Table[UserDevice](tag, Some("auth"), "userdevices") {
 
-  def * = (userdevicesid.?, userid, deviceid, authguid) <> (UserDevice.tupled, UserDevice.unapply)
+  def * = (userdevicesid.?, userid, deviceid, authguid, expiredate.?) <> (UserDevice.tupled, UserDevice.unapply)
   //def * = (userdevicesid, userid, deviceid, authguid) <> (UserDevice.tupled, UserDevice.unapply)
   //def ? = (userdevicesid, userid.?, deviceid.?, authguid.?, expiredate).shaped.<>({r=>import r._; _1.map(_=> UserDevice.tupled((_1, _2.get, _3.get, _4.get, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
@@ -22,7 +22,7 @@ class UserDevicesTable(tag: Tag) extends Table[UserDevice](tag, Some("auth"), "u
   val userid: Column[UUID] = column[UUID]("userid")
   val deviceid: Column[UUID] = column[UUID]("deviceid")
   val authguid: Column[UUID] = column[UUID]("authguid")
-  //val expiredate: Column[Option[DateTime]] = column[Option[DateTime]]("expiredate")
+  val expiredate: Column[DateTime] = column[DateTime]("expiredate")
 
   def user = foreignKey("userdevices_userid_fkey", userid, UsersDAL.users)(_.userid)
 }
