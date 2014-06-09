@@ -31,8 +31,8 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
 
   def UserExist(email: String, database: Database): Boolean = {
     val user = database.withSession {
-      val dal = UsersDAL
-      session => dal.findByEmail (email) (session)
+      //val dal = UsersDAL
+      session => UsersDAL.findByEmail (email) (session)
     }
 
     !user.equals(None)
