@@ -24,6 +24,7 @@ object dao {
     props.setProperty("sslfactory", sslfactory)
 
     val database: Database = Database.forURL(url, username, password, props)
+    //val database: Database = Database.forURL(url, username, password)
     database
   }
 
