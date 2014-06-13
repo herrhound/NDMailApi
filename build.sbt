@@ -17,6 +17,9 @@ resolvers += "spray" at "http://repo.spray.io/"
 
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
+resolvers += "Typesafe Repository" at "http://commons.appache.org"
+
+
 libraryDependencies ++= Seq(
   "com.typesafe.akka"   %% "akka-actor"         % "2.3.2",
   "com.typesafe.akka"   %% "akka-slf4j"         % "2.3.2",
@@ -28,5 +31,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick"  %% "slick"              % "2.0.2",
   "joda-time"            % "joda-time"          % "2.3",
   "org.joda"             % "joda-convert"       % "1.5",
-  "com.github.tototoshi" %% "slick-joda-mapper" % "1.1.0"
+  "com.github.tototoshi" %% "slick-joda-mapper" % "1.1.0",
+  "commons-daemon"       %  "commons-daemon"    % "1.0.15"
 )
