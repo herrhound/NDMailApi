@@ -3,8 +3,6 @@ import Keys._
 
 import com.typesafe.sbt.SbtStartScript
 
-//seq(SbtStartScript.startScriptForClassesSettings: _*)
-
 seq(SbtStartScript.startScriptForClassesSettings: _*)
 
 name := "NDMailApi"
