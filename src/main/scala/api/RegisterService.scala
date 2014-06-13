@@ -20,6 +20,9 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
 
   //http PUT http://localhost:8080/register < register.json
   //http PUT http://localhost:8080/registerdevice < registerdevice.json
+
+  //Heroku
+  //http PUT http://dry-atoll-6423.herokuapp.com/register < register.json
   val route =
     path("register") {
       entity(as[RegisterModel]) { ent =>
