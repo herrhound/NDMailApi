@@ -9,9 +9,10 @@ import scala.math.Ordering
 /**
  * Created by Ruben on 2014-06-20.
  */
+
 class DeviceTable(tag: Tag) extends Table[Device](tag, Some("auth"), "device") {
 
-  def * = (deviceid.?, userid, deviceuniqueid, devicetype) <> (Device.tupled, Device.unapply)
+  def * = (deviceid, userid, deviceuniqueid, devicetype) <> (Device.tupled, Device.unapply)
 
   val deviceid: Column[UUID] = column[UUID]("deviceid", O.PrimaryKey)
   val userid: Column[UUID] = column[UUID]("userid")
@@ -22,11 +23,11 @@ class DeviceTable(tag: Tag) extends Table[Device](tag, Some("auth"), "device") {
 
 }
 
-trait Device {
+trait Devices {
 
   def findByMapping(uid: UUID, did: UUID)(implicit s: Session): Option[Device]
 
-  def isAuth(tokens: AuthTokens)(implicit s: Session): Boolean
+  //def isAuth(tokens: AuthTokens)(implicit s: Session): Boolean
 
   def insert(ud : Device)(implicit s: Session)
 
@@ -38,7 +39,7 @@ trait Device {
 
 }
 
-object DeviceDAL extends Device{
+object DeviceDAL extends Devices{
   val device = TableQuery[DeviceTable]
 
   def findByMapping(uid: UUID, did: UUID)(implicit s: Session): Option[Device] = {
@@ -67,3 +68,4 @@ object DeviceDAL extends Device{
   */
 
 }
+
