@@ -31,8 +31,8 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
 
   def UserExist(email: String, database: Database): Boolean = {
     val user = database.withSession {
-      //val dal = UsersDAL
-      session => UsersDAL.findByEmail (email) (session)
+      val dal = UsersDAL
+      session => dal.findByEmail (email) (session)
     }
 
     !user.equals(None)
@@ -52,10 +52,11 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
   def RegisterUser(model: DeviceRegisterModel, database: Database): Boolean = {
     try {
       val userId = GetNewUUID
-      val user = new User(userId, model.email, model.email, Option(model.email),Option(""),Option(""),Option(2),1 )
+      val applicationId = UUID.fromString("e75b92a3-3299-4407-a913-c5ca196b3cab")
+      val user = new User(userId, model.email, model.email, Option(model.email),Option(""), Option("")/* applicationId*/)
       database.withSession{
-        val dal = UsersDAL
-        session => dal.insert(user)(session)
+        //val dal = UsersDAL
+        session => UsersDAL.insert(user)(session)
       }
       true
     }

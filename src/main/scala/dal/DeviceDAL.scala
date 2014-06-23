@@ -12,7 +12,7 @@ import scala.math.Ordering
 
 class DeviceTable(tag: Tag) extends Table[Device](tag, Some("auth"), "device") {
 
-  def * = (deviceid, userid, deviceuniqueid, devicetype) <> (Device.tupled, Device.unapply)
+  def * = (deviceid, userid, deviceuniqueid, devicetype.?) <> (Device.tupled, Device.unapply)
 
   val deviceid: Column[UUID] = column[UUID]("deviceid", O.PrimaryKey)
   val userid: Column[UUID] = column[UUID]("userid")

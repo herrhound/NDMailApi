@@ -3,6 +3,8 @@
  */
 package models.ndapidtos
 
+import java.util.UUID
+
 case class DeviceRegisterModel (
   email: String,
   deviceUniqueId: String
@@ -16,4 +18,4 @@ case class RegisterModel (
   secretAnswer: Option[String] = None
 )
 
-
+//applicationId: UUID

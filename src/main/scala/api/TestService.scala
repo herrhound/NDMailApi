@@ -24,7 +24,7 @@ class TestService(system:ActorSystem, testing: ActorRef)(implicit context: Execu
   implicit val PersonFormater = jsonFormat4(Person)
   implicit val NDRequestFormater = jsonFormat3(NDApiRequest[Person])
   implicit val NDResponseFormater = jsonFormat3(NDApiResponse[Person])
-  implicit val UserFormater = jsonFormat8(User)
+  implicit val UserFormater = jsonFormat6(User)
 
 
   //http GET http://localhost:8080/test

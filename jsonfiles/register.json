@@ -3,5 +3,6 @@
     "userName": "ntonkev",
     "userPassword": "123Go",
     "secretQuestion": "",
-    "secretAnswer": ""
+    "secretAnswer": "",
+    "applicationId": ""
 }
