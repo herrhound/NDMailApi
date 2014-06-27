@@ -53,7 +53,8 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
     try {
       val userId = GetNewUUID
       val applicationId = UUID.fromString("e75b92a3-3299-4407-a913-c5ca196b3cab")
-      val user = new User(userId, model.email, model.email, Option(model.email),Option(""), Option("")/* applicationId*/)
+      val user = new User(userId, model.email, model.email, Option(model.email), Option(""), Option(""), applicationId)
+      println(user.toString)
       database.withSession{
         //val dal = UsersDAL
         session => UsersDAL.insert(user)(session)

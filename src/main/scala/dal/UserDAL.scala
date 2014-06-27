@@ -9,7 +9,7 @@ import java.util.UUID
  */
 
 class UserTable(tag: Tag) extends Table[User](tag, Some("auth"), "user") {
-  def * = (userid, username, userpassword, email, secretquestion, secretanswer/*, transactionid, systemstatusid*/) <> (User.tupled, User.unapply)
+  def * = (userid, username, userpassword, email, secretquestion, secretanswer, applicationId) <> (User.tupled, User.unapply)
   //def ? = (userid.?, username.?, userpassword.?, email, secretquestion, secretanswer/*, transactionid, systemstatusid.?*/).shaped.<>({r=>import r._; _1.map(_=> User.tupled((_1.get, _2.get, _3.get, _4, _5, _6, _7, _8.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
   /** Database column userid PrimaryKey */
@@ -24,9 +24,8 @@ class UserTable(tag: Tag) extends Table[User](tag, Some("auth"), "user") {
   val secretquestion: Column[Option[String]] = column[Option[String]]("secretquestion")
   /** Database column secretanswer  */
   val secretanswer: Column[Option[String]] = column[Option[String]]("secretanswer")
-
   /** Database column applicationId  */
-  //val applicationId: Column[UUID] = column[UUID]("applicationId")
+  val applicationId: Column[UUID] = column[UUID]("applicationId")
 
   /** Database column transactionid  */
   //val transactionid: Column[Option[Int]] = column[Option[Int]]("transactionid")
@@ -54,7 +53,7 @@ trait Users {
   def count(filter: String)(implicit s: Session): Int
 
   def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%")
-          (implicit s: Session) : Page[(Any,Any,Any,Any,Any,Any/*,Any,Any*/)]
+          (implicit s: Session) : Page[(Any,Any,Any,Any,Any,Any,Any/*,Any,Any*/)]
 }
 
 object UsersDAL extends Users {
@@ -90,10 +89,10 @@ object UsersDAL extends Users {
   }
 
   def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%")
-          (implicit s: Session) : Page[(Any,Any,Any,Any,Any,Any/*,Any,Any*/)] = {
+          (implicit s: Session) : Page[(Any,Any,Any,Any,Any,Any,Any/*,Any,Any*/)] = {
     val offset: Int = pageSize * page
     val result = (for (u <- users) yield u).drop(offset).take(pageSize).list.map(
-      row => (row.userid, row.username, row.userpassword, row.email, row.secretquestion, row.secretanswer/*, row.applicationId*/))//, row.transactionid, row.systemstatusid))
+      row => (row.userid, row.username, row.userpassword, row.email, row.secretquestion, row.secretanswer, row.applicationid))//, row.transactionid, row.systemstatusid))
     val totalRows = count(filter)
     Page(result, page, offset, totalRows)
   }
