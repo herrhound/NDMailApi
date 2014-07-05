@@ -16,7 +16,7 @@ object NDMailRestApi extends App with Core with CoreActors with Api with Web {
   val logger = LoggerFactory.getLogger(this.getClass)
   logger.debug("Hit any key to stop the service.")
   println("Hit any key to stop the service!!!")
-  println("Uptime : " + system.uptime)
+  //println("Uptime : " + system.uptime)
   val result = readLine()
   //system.shutdown()
 }
