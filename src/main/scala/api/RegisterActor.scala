@@ -34,7 +34,6 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
       val dal = UsersDAL
       session => dal.findByEmail (email) (session)
     }
-
     !user.equals(None)
   }
 

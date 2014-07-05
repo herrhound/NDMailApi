@@ -25,7 +25,7 @@ class UserTable(tag: Tag) extends Table[User](tag, Some("auth"), "user") {
   /** Database column secretanswer  */
   val secretanswer: Column[Option[String]] = column[Option[String]]("secretanswer")
   /** Database column applicationId  */
-  val applicationId: Column[UUID] = column[UUID]("applicationId")
+  val applicationId: Column[UUID] = column[UUID]("applicationid")
 
   /** Database column transactionid  */
   //val transactionid: Column[Option[Int]] = column[Option[Int]]("transactionid")
