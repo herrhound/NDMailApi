@@ -51,8 +51,8 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
   def RegisterUser(model: DeviceRegisterModel, database: Database): Boolean = {
     try {
       val userId = GetNewUUID
-      val applicationId = UUID.fromString("e75b92a3-3299-4407-a913-c5ca196b3cab")
-      val user = new User(userId, model.email, model.email, Option(model.email), Option(""), Option(""), applicationId)
+      val applicationId = UUID.fromString("e75b92a3-3299-4407-a913-c5ca196b3cab") //NDMailApi
+      val user = new User(userId, model.email, Option(model.email), applicationId)
       println(user.toString)
       database.withSession{
         //val dal = UsersDAL
