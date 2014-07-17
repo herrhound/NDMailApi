@@ -31,7 +31,6 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
             val data = Register(ent)
             val response = new NDApiResponse[Boolean](ErrorStatus.None, "", data)
             response
-            //ent
           }
         }
       }
@@ -40,10 +39,9 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
       entity(as[DeviceRegisterModel]) { ent =>
         put {
           complete {
-            val success = RegisterDevice(system, ent)
-            if(success) {
-              val authguid = MapDevice(system, ent)
-              new NDApiResponse[String](ErrorStatus.None, "", authguid)
+            val authguid = RegisterDevice(system, ent)
+            if(authguid !=  "") {
+              new NDApiResponse[String](ErrorStatus.None, "", authguid.toString())
             }
             else {
               new NDApiResponse[String](ErrorStatus.None, "", "")

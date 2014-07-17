@@ -14,10 +14,8 @@ object NDMailRestApi extends App with Core with CoreActors with Api with Web {
 
   implicit lazy val system = ActorSystem("NDMailApi")
   val logger = LoggerFactory.getLogger(this.getClass)
-  logger.debug("Hit any key to stop the service.")
-  println("Hit any key to stop the service!!!")
-  //println("Uptime : " + system.uptime)
-  val result = readLine()
+  logger.debug("Server running")
+  println("Server running")
+  //val result = readLine()
   //system.shutdown()
 }
-//with Boot //with CoreActors
