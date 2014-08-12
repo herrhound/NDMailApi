@@ -3,6 +3,8 @@ package dal
 import scala.slick.driver.PostgresDriver.simple._
 import models.auth._
 import java.util.UUID
+import org.joda.time._
+import com.github.tototoshi.slick.PostgresJodaSupport._
 
 /**
  * Created by AMoroz on 20/05/2014.
@@ -10,28 +12,27 @@ import java.util.UUID
 
 class UserTable(tag: Tag) extends Table[User](tag, Some("auth"), "user") {
   //def * = (userid, username, userpassword, email, secretquestion, secretanswer, applicationId) <> (User.tupled, User.unapply)
-  def * = (userid, username, email, applicationId) <> (User.tupled, User.unapply)
+  def * = (userid, username, email, token, tokenexpirydate, id, verifiedemail,
+            givenname, surname, link, picture, gender, secretquestion,
+            secretanswer, userpassword, applicationId) <> (User.tupled, User.unapply)
   //def ? = (userid.?, username.?, userpassword.?, email, secretquestion, secretanswer/*, transactionid, systemstatusid.?*/).shaped.<>({r=>import r._; _1.map(_=> User.tupled((_1.get, _2.get, _3.get, _4, _5, _6, _7, _8.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
-  /** Database column userid PrimaryKey */
   val userid: Column[UUID] = column[UUID]("userid", O.PrimaryKey)
-  /** Database column username  */
   val username: Column[String] = column[String]("username")
-  /** Database column userpassword  */
-  //val userpassword: Column[String] = column[String]("userpassword")
-  /** Database column email  */
-  val email: Column[Option[String]] = column[Option[String]]("email")
-  /** Database column secretquestion  */
-  //val secretquestion: Column[Option[String]] = column[Option[String]]("secretquestion")
-  /** Database column secretanswer  */
-  //val secretanswer: Column[Option[String]] = column[Option[String]]("secretanswer")
-  /** Database column applicationId  */
-  val applicationId: Column[UUID] = column[UUID]("applicationid")
-
-  /** Database column transactionid  */
-  //val transactionid: Column[Option[Int]] = column[Option[Int]]("transactionid")
-  /** Database column systemstatusid  */
-  //val systemstatusid: Column[Int] = column[Int]("systemstatusid")
+  val email: Column[String] = column[String]("email", O.Nullable)
+  val token: Column[Option[String]] = column[String]("token", O.Nullable)
+  val tokenexpirydate: Column[DateTime] = column[DateTime]("tokenexpirydate", O.Nullable)
+  val id: Column[Int] = column[Int]("id", O.Nullable)
+  val verifiedemail: Column[Boolean] = column[Boolean]("verifiedemail", O.Nullable)
+  val givenname: Column[String] = column[String]("givenname", O.Nullable)
+  val surname: Column[String] = column[String]("surname", O.Nullable)
+  val link: Column[String] = column[String]("link", O.Nullable)
+  val picture: Column[String] = column[String]("picture", O.Nullable)
+  val gender: Column[Int] = column[Int]("gender", O.Nullable)
+  val secretquestion: Column[String] = column[String]("secretquestion", O.Nullable)
+  val secretanswer: Column[String] = column[String]("secretanswer", O.Nullable)
+  val userpassword: Column[String] = column[String]("userpassword", O.NotNull)
+  val applicationId: Column[UUID] = column[UUID]("applicationid", O.Nullable)
 }
 
 

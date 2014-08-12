@@ -1,7 +1,7 @@
 package api
 
 import akka.actor.{ActorSystem, Actor}
-import models.ndapidtos.{RegisterModel, DeviceRegisterModel}
+import models.ndapidtos._
 import utils.{NDApiLogging}
 import models.{ErrorStatus, NDApiResponse}
 import scala.slick.driver.PostgresDriver.simple._
@@ -10,7 +10,7 @@ import models.auth._
 import utils._
 import java.util.UUID
 import models.auth.User
-import models.ndapidtos.RegisterModel
+import models.ndapidtos.UserRegisterModel
 import models.ndapidtos.DeviceRegisterModel
 import models.auth.UserDevice
 
@@ -37,6 +37,15 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
     !user.equals(None)
   }
 
+  def DeviceExist(userId: UUID, deviceId: String, database: Database): Boolean = {
+    val device = database.withSession {
+      val dal = DeviceDAL
+      val deviceUUID = UUID.fromString(deviceId)
+      session => dal.findByMapping(userId, deviceUUID) (session)
+    }
+    !device.equals(None)
+  }
+
   def GetUserDeviceMapping(userId: UUID, deviceId: UUID, d: Database) = {
 
     val mpng = d.withSession {
@@ -48,44 +57,54 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
 
   }
 
-  def RegisterUser(model: DeviceRegisterModel, database: Database): Boolean = {
-    try {
-      val userId = GetNewUUID
-      val applicationId = UUID.fromString("e75b92a3-3299-4407-a913-c5ca196b3cab") //NDMailApi
-      val user = new User(userId, model.email, Option(model.email), applicationId)
-      println(user.toString)
-      database.withSession{
-        //val dal = UsersDAL
-        session => UsersDAL.insert(user)(session)
+  def RegisterUser(system: ActorSystem, model: UserRegisterModel): String = {
+    val database = dao.GetDataBase(system)
+    if (UserExist(model.email, database)){
+      "User already exist"
+    } else
+    {
+      try {
+        val userId = GetNewUUID
+        val applicationId = UUID.fromString("e75b92a3-3299-4407-a913-c5ca196b3cab")
+        val user = new User(userId, model.email, Option(model.email), applicationId)
+        println(user.toString)
+        database.withSession{
+          session => UsersDAL.insert(user)(session)
+        }
+        userId.toString()
       }
-      true
-    }
-    catch {
-      case e: Exception => {
-        errorLogger.error(e.getStackTraceString)
+      catch {
+        case e: Exception => {
+          errorLogger.error(e.getStackTraceString)
+        }
+          "Error inserting a user"
       }
-        false
     }
   }
 
-  def RegisterDevice(system: ActorSystem, model: DeviceRegisterModel): Boolean = {
+  def RegisterDevice(system: ActorSystem, model: DeviceRegisterModel): String = {
     try {
       val database = dao.GetDataBase(system)
-      if(!UserExist(model.email, database)) {
-        RegisterUser(model, database)
+      val user: Option[User] = GetUserByEmail(model.email, database)
+      val userId: UUID = user.get.userid
+
+      if(UserExist(model.email, database)) {
+        if (!DeviceExist(userId, model.deviceUniqueId, database)) {
+          MapDevice(system, model)
+        }
+        else
+          "Device already registered"
       }
       else
-      {
-        false
-      }
+        "User doesn't exist"
+
     }
     catch {
       case e: Exception => {
         errorLogger.error(e.getStackTraceString)
       }
-      false
+    "00000000-0000-0000-0000-000000000000"
     }
-
   }
 
   def MapDevice(system: ActorSystem, model: DeviceRegisterModel): String = {
@@ -123,7 +142,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
 
 
 
-  def Register(model: RegisterModel): Boolean = {
+  def Register(model: UserRegisterModel): Boolean = {
     true
   }
 
@@ -136,7 +155,7 @@ class RegisterActor extends Actor {
   val system = ActorSystem()
   def receive = {
     case (model: DeviceRegisterModel) => sender ! RegisterDevice(system, model)
-    case (model: RegisterModel) => sender ! Register(model)
+    case (model: UserRegisterModel) => sender ! Register(model)
   }
 
 }

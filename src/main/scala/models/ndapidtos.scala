@@ -10,7 +10,7 @@ case class DeviceRegisterModel (
   deviceUniqueId: String
 )
 
-case class RegisterModel (
+case class UserRegisterModel (
   email: String,
   userName: Option[String] = None,
   userPassword: Option[String] = None,
