@@ -10,8 +10,7 @@ import models.auth._
 import utils._
 import java.util.UUID
 import models.auth.User
-import models.ndapidtos.UserRegisterModel
-import models.ndapidtos.DeviceRegisterModel
+import models.ndapidtos._
 import models.auth.UserDevice
 import org.joda.time.DateTime
 
@@ -58,28 +57,17 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
 
   }
 
-  def RegisterUser(system: ActorSystem, model: UserRegisterModel): String = {
+  def RegisterUser(system: ActorSystem, model: UserRegisterDTO): String = {
     val database = dao.GetDataBase(system)
-    if (UserExist(model.email, database)){
+    if (UserExist(model.email.get, database)){
       "User already exist"
     } else
     {
       try {
         val userId = GetNewUUID
-        val token = None
-        val tokenexpirydate = None
-        val Id = None
-        val verifiedemail = None
-        val givenname = None
-        val surname = None
-        val link = None
-        val picture = None
-        val gender = None
         val applicationId = UUID.fromString("e75b92a3-3299-4407-a913-c5ca196b3cab")
-        val user = new User(userId, model.userName, Option(model.email), token, tokenexpirydate, Id, verifiedemail, givenname, surname, link, picture, gender, /* model.secretQuestion,model.secretAnswer, model.userPassword,*/ Option(applicationId))
-        //(userId, model.userName, Option(model.email), Option(Some), Option(Some), Option(Some),
-        //  Option(Some),Option(Some),Option(Some),Option(Some),Option(Some),Option(Some),Option(Some),Option(Some),
-        //  Option(applicationId))
+        //val user = new User(userId, model.userName, Option(model.email), token, tokenexpirydate, Id, verifiedemail, givenname, surname, link, picture, gender, /* model.secretQuestion,model.secretAnswer, model.userPassword,*/ Option(applicationId))
+        val user = new User(userId, model.username, model.email, model.token, model.tokenexpirydate, model.Id, model.verifiedemail, model.givenname, model.surname, model.link, model.picture, model.gender, /* model.secretQuestion,model.secretAnswer, model.userPassword,*/ Option(applicationId))
         println(user.toString)
         database.withSession{
           session => UsersDAL.insert(user)(session)
@@ -152,13 +140,6 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
       ""
     }
   }
-
-
-
-  def Register(model: UserRegisterModel): Boolean = {
-    true
-  }
-
 }
 
 class RegisterActor extends Actor {
@@ -168,7 +149,7 @@ class RegisterActor extends Actor {
   val system = ActorSystem()
   def receive = {
     case (model: DeviceRegisterModel) => sender ! RegisterDevice(system, model)
-    case (model: UserRegisterModel) => sender ! Register(model)
+    case (model: UserRegisterDTO) => sender ! RegisterUser(system, model)
   }
 
 }

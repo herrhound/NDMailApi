@@ -3,7 +3,7 @@ package api
 import akka.actor.{ActorSystem, ActorRef}
 import scala.concurrent.ExecutionContext
 import spray.routing.Directives
-import models.ndapidtos.{UserRegisterModel, DeviceRegisterModel}
+import models.ndapidtos._
 import api.RegisterActor._
 import models.{ErrorStatus, NDApiResponse}
 
@@ -14,7 +14,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
   extends Directives with  DefaultJsonFormats  {
 
   implicit val DeviceRegisterFormater = jsonFormat2(DeviceRegisterModel)
-  implicit val RegisterFormater = jsonFormat5(UserRegisterModel)
+  implicit val RegisterFormater = jsonFormat12(UserRegisterDTO)
   implicit val NDResponseFormater = jsonFormat3(NDApiResponse[Boolean])
   implicit val NDRegisterDeviceResponseFormater = jsonFormat3(NDApiResponse[String])
 
@@ -25,7 +25,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
   //http PUT http://dry-atoll-6423.herokuapp.com/register < register.json
   val route =
     path("registeruser") {
-      entity(as[UserRegisterModel]) { ent =>
+      entity(as[UserRegisterDTO]) { ent =>
         put {
           complete {
              new NDApiResponse[String](ErrorStatus.None, "", RegisterUser(system, ent))

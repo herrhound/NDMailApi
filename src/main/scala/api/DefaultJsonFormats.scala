@@ -8,6 +8,8 @@ import java.util.UUID
 import spray.http.StatusCode
 import web.ErrorResponseException
 import models.ErrorStatus
+import org.joda.time.DateTime
+
 
 /**
  * Created by Nikola on 3/11/14.
@@ -25,6 +27,14 @@ trait DefaultJsonFormats extends DefaultJsonProtocol with SprayJsonSupport with 
     def read(value: JsValue) = value match {
       case JsString(x) => UUID.fromString(x)
       case x           => deserializationError("Wrong UUID format, Expected UUID but got " + x)
+    }
+  }
+
+  implicit object JodaDateTimeJsonFormat extends RootJsonFormat[DateTime] {
+    def write(x: DateTime) = JsString(x.toString())
+    def read(value: JsValue) = value match {
+      case JsString(x) => DateTime.parse(x)
+      case x           => deserializationError("Wrong DateTime format, Expected DateTime but got " + x)
     }
   }
 
