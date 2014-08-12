@@ -11,30 +11,32 @@ import com.github.tototoshi.slick.PostgresJodaSupport._
  */
 
 class UserTable(tag: Tag) extends Table[User](tag, Some("auth"), "user") {
-  //def * = (userid, username, userpassword, email, secretquestion, secretanswer, applicationId) <> (User.tupled, User.unapply)
-  def * = (userid, username, email, token, tokenexpirydate, id, verifiedemail,
-            givenname, surname, link, picture, gender, secretquestion,
-            secretanswer, userpassword, applicationId) <> (User.tupled, User.unapply)
-  //def ? = (userid.?, username.?, userpassword.?, email, secretquestion, secretanswer/*, transactionid, systemstatusid.?*/).shaped.<>({r=>import r._; _1.map(_=> User.tupled((_1.get, _2.get, _3.get, _4, _5, _6, _7, _8.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+  def * = (userid, username, email.?, token.?, tokenexpirydate.?, Id.?, verifiedemail.?, givenname.?, surname.?, link.?, picture.?, gender.?, applicationId.?) <> (User.tupled, User.unapply)
+  /*secretquestion.?, secretanswer.?, userpassword, */
 
-  val userid: Column[UUID] = column[UUID]("userid", O.PrimaryKey)
+  val userid: Column[UUID] = column[UUID]("user_id")
   val username: Column[String] = column[String]("username")
-  val email: Column[String] = column[String]("email", O.Nullable)
-  val token: Column[Option[String]] = column[String]("token", O.Nullable)
-  val tokenexpirydate: Column[DateTime] = column[DateTime]("tokenexpirydate", O.Nullable)
-  val id: Column[Int] = column[Int]("id", O.Nullable)
-  val verifiedemail: Column[Boolean] = column[Boolean]("verifiedemail", O.Nullable)
-  val givenname: Column[String] = column[String]("givenname", O.Nullable)
-  val surname: Column[String] = column[String]("surname", O.Nullable)
-  val link: Column[String] = column[String]("link", O.Nullable)
-  val picture: Column[String] = column[String]("picture", O.Nullable)
-  val gender: Column[Int] = column[Int]("gender", O.Nullable)
-  val secretquestion: Column[String] = column[String]("secretquestion", O.Nullable)
-  val secretanswer: Column[String] = column[String]("secretanswer", O.Nullable)
-  val userpassword: Column[String] = column[String]("userpassword", O.NotNull)
-  val applicationId: Column[UUID] = column[UUID]("applicationid", O.Nullable)
+  val email: Column[String] = column[String]("email")
+  val token: Column[String] = column[String]("token")
+  val tokenexpirydate: Column[DateTime] = column[DateTime]("tokenexpirydate")
+  val Id: Column[Int] = column[Int]("id")
+  val verifiedemail: Column[Boolean] = column[Boolean]("verifiedemail")
+  val givenname: Column[String] = column[String]("givenname")
+  val surname: Column[String] = column[String]("surname")
+  val link: Column[String] = column[String]("link")
+  val picture: Column[String] = column[String]("picture")
+  val gender: Column[Int] = column[Int]("gender")
+  val applicationId: Column[UUID] = column[UUID]("application_id")
+  //val secretquestion: Column[Option[String]] = column[Option[String]]("secretquestion")
+  //val secretanswer: Column[Option[String]] = column[Option[String]]("secretanswer")
+  //val userpassword: Column[String] = column[String]("userpassword")
 }
 
+
+
+//,
+//FOREIGN KEY ("26") REFERENCES application (application_id)
+//MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION
 
 
 trait Users {

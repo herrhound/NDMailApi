@@ -18,7 +18,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
   implicit val NDResponseFormater = jsonFormat3(NDApiResponse[Boolean])
   implicit val NDRegisterDeviceResponseFormater = jsonFormat3(NDApiResponse[String])
 
-  //http PUT http://localhost:8080/register < register.json
+  //http PUT http://localhost:8080/registeruser < register.json
   //http PUT http://localhost:8080/registerdevice < registerdevice.json
 
   //Heroku

@@ -24,7 +24,7 @@ class TestService(system:ActorSystem, testing: ActorRef)(implicit context: Execu
   implicit val PersonFormater = jsonFormat4(Person)
   implicit val NDRequestFormater = jsonFormat3(NDApiRequest[Person])
   implicit val NDResponseFormater = jsonFormat3(NDApiResponse[Person])
-  implicit val UserFormater = jsonFormat4(User)
+  //implicit val UserFormater = jsonFormat11(User)
 
 
   //http GET http://localhost:8080/test
@@ -36,7 +36,8 @@ class TestService(system:ActorSystem, testing: ActorRef)(implicit context: Execu
     path("test") {
       get {
           complete {
-            TestFunc(system, "test@test.com")
+            "OK"
+            //TestFunc(system, "test@test.com")
           }
       }
     }~

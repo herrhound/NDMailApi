@@ -12,8 +12,8 @@ case class DeviceRegisterModel (
 
 case class UserRegisterModel (
   email: String,
-  userName: Option[String] = None,
-  userPassword: Option[String] = None,
+  userName: String,
+  userPassword: String,
   secretQuestion: Option[String] = None,
   secretAnswer: Option[String] = None
 )

@@ -13,6 +13,7 @@ import models.auth.User
 import models.ndapidtos.UserRegisterModel
 import models.ndapidtos.DeviceRegisterModel
 import models.auth.UserDevice
+import org.joda.time.DateTime
 
 /**
  * Created by nikolatonkev on 2014-05-20.
@@ -65,8 +66,20 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
     {
       try {
         val userId = GetNewUUID
+        val token = None
+        val tokenexpirydate = None
+        val Id = None
+        val verifiedemail = None
+        val givenname = None
+        val surname = None
+        val link = None
+        val picture = None
+        val gender = None
         val applicationId = UUID.fromString("e75b92a3-3299-4407-a913-c5ca196b3cab")
-        val user = new User(userId, model.email, Option(model.email), applicationId)
+        val user = new User(userId, model.userName, Option(model.email), token, tokenexpirydate, Id, verifiedemail, givenname, surname, link, picture, gender, /* model.secretQuestion,model.secretAnswer, model.userPassword,*/ Option(applicationId))
+        //(userId, model.userName, Option(model.email), Option(Some), Option(Some), Option(Some),
+        //  Option(Some),Option(Some),Option(Some),Option(Some),Option(Some),Option(Some),Option(Some),Option(Some),
+        //  Option(applicationId))
         println(user.toString)
         database.withSession{
           session => UsersDAL.insert(user)(session)

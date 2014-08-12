@@ -4,10 +4,11 @@ import java.util.UUID
 import org.joda.time._
 
 case class User(userid: UUID, username: String, email: Option[String], token: Option[String],
-                tokenexpirydate: Option[DateTime], id: Option[Int], verifiedemail: Option[Boolean],
+                tokenexpirydate: Option[DateTime], Id: Option[Int], verifiedemail: Option[Boolean],
                 givenname: Option[String], surname: Option[String], link: Option[String],
-                picture: Option[String], gender: Option[Int], secretquestion: Option[String],
-                secretanswer: Option[String],userpassword: String, applicationid: Option[UUID])
+                picture: Option[String], gender: Option[Int],
+                applicationid: Option[UUID])
+/* secretquestion: Option[String], secretanswer: Option[String],userpassword: String, */
 
 case class UserDevice (userdevicesid: Option[Int] = None, userid: UUID, deviceid: UUID, authguid: UUID, expiredate: Option[DateTime])
 
