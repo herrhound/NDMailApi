@@ -18,17 +18,19 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
   implicit val NDResponseFormater = jsonFormat3(NDApiResponse[Boolean])
   implicit val NDRegisterDeviceResponseFormater = jsonFormat3(NDApiResponse[String])
 
-  //http PUT http://localhost:8080/registeruser < register.json
+  //http PUT http://localhost:8080/registeruser < registeruser.json
   //http PUT http://localhost:8080/registerdevice < registerdevice.json
 
   //Heroku
   //http PUT http://dry-atoll-6423.herokuapp.com/register < register.json
+  //http PUT http://dry-atoll-6423.herokuapp.com/registeruser < registeruser.json
   val route =
     path("registeruser") {
       entity(as[UserRegisterDTO]) { ent =>
         put {
           complete {
-             new NDApiResponse[String](ErrorStatus.None, "", RegisterUser(system, ent))
+            RegisterUser(system, ent)
+             //new NDApiResponse[String](ErrorStatus.None, "", RegisterUser(system, ent))
           }
         }
       }

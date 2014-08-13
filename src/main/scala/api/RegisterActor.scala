@@ -57,12 +57,12 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
 
   }
 
-  def RegisterUser(system: ActorSystem, model: UserRegisterDTO): String = {
+  def RegisterUser(system: ActorSystem, model: UserRegisterDTO): NDApiResponse[String] = {
     val database = dao.GetDataBase(system)
     if (UserExist(model.email.get, database)){
-      "User already exist"
-    } else
-    {
+      new NDApiResponse[String](ErrorStatus.UserExists, "User already exist", "")
+    }
+    else {
       try {
         val userId = GetNewUUID
         val applicationId = UUID.fromString("e75b92a3-3299-4407-a913-c5ca196b3cab")
@@ -72,13 +72,13 @@ object RegisterActor extends NDApiLogging with NDApiUtil {
         database.withSession{
           session => UsersDAL.insert(user)(session)
         }
-        userId.toString()
+        new NDApiResponse[String](ErrorStatus.None, "", userId.toString())
       }
       catch {
         case e: Exception => {
           errorLogger.error(e.getStackTraceString)
         }
-          "Error inserting a user"
+        new NDApiResponse[String](ErrorStatus.ErrorSavingData, "Error inserting a user", "")
       }
     }
   }
