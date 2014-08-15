@@ -85,7 +85,12 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
           }
         }
       }
+<<<<<<< HEAD
     } ~
+=======
+    }
+
+>>>>>>> 404c04365aa5bd289659be381c78d9bb43169d4a
     path("registerdevice") {
       entity(as[DeviceRegisterModel]) { ent =>
         put {
@@ -100,6 +105,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
           }
         }
       }
+<<<<<<< HEAD
     } ~
     path("oauth2callback") {
       parameter("code") {
@@ -113,30 +119,21 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
       }
       /*
       entity(as[String]) { ent =>
-        get {
-          //errorLogger.info("oauth2callback : ",ent)
-          System.out.println(ent)
-          complete {
-            val code = ent
-            val client_id = "783241267105-s1si6l0t9h1dat18gih2j5bphg7st307.apps.googleusercontent.com"
-            val client_secret = "MbSGiXXwLPaanFbJSVseW9qs"
-            val redirect_uri = "http://dry-atoll-6423.herokuapp.com/oauth2callback"
-            val grant_type = "authorization_code"
-
-            implicit val system = ActorSystem()
-
-            val pipeline: HttpRequest => Future[GoogleToken] = (
-              sendReceive
-              //~> setContentType(MediaTypes.`application/json`)
-              //~> encode(Gzip)
-              //~> decode(Deflate)
-              ~>unmarshal[GoogleToken]
-            )
-            pipeline(Post(s"https://accounts.google.com/o/oauth2/token?code=$code&client_id=$client_id&client_secret=$client_secret&redirect_uri=$redirect_uri&grant_type=$grant_type"))
-         }
-        }
-      }
-      */
+=======
     }
 
+    path("oauth2callback"){
+>>>>>>> 404c04365aa5bd289659be381c78d9bb43169d4a
+        get {
+          complete {
+            System.out.println("123")
+            new NDApiResponse[String](ErrorStatus.None, "Test", "123")
+          }
+        }
+<<<<<<< HEAD
+      }
+      */
+=======
+>>>>>>> 404c04365aa5bd289659be381c78d9bb43169d4a
+    }
 }
