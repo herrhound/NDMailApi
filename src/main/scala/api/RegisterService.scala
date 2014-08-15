@@ -104,7 +104,8 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
     path("oauth2callback") {
       entity(as[String]) { ent =>
         get {
-          errorLogger.info("oauth2callback : ",ent)
+          //errorLogger.info("oauth2callback : ",ent)
+          System.out.println(ent)
           complete {
             val code = ent
             val client_id = "783241267105-s1si6l0t9h1dat18gih2j5bphg7st307.apps.googleusercontent.com"
