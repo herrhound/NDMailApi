@@ -69,10 +69,12 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
 
   //http PUT http://localhost:8080/registeruser < registeruser.json
   //http PUT http://localhost:8080/registerdevice < registerdevice.json
+  //http GET http://localhost:8080/oauth2callback?code=noway
 
   //Heroku
   //http PUT http://dry-atoll-6423.herokuapp.com/register < register.json
   //http PUT http://dry-atoll-6423.herokuapp.com/registeruser < registeruser.json
+  //http GET http://dry-atoll-6423.herokuapp.com/oauth2callback < oauth2callback.json
   val route =
     path("registeruser") {
       entity(as[UserRegisterDTO]) { ent =>
@@ -83,7 +85,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
           }
         }
       }
-    }
+    } ~
     path("registerdevice") {
       entity(as[DeviceRegisterModel]) { ent =>
         put {
@@ -98,10 +100,18 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
           }
         }
       }
-    }
-
-
+    } ~
     path("oauth2callback") {
+      parameter("code") {
+        code => {
+          get {
+            complete {
+              code
+            }
+          }
+        }
+      }
+      /*
       entity(as[String]) { ent =>
         get {
           //errorLogger.info("oauth2callback : ",ent)
@@ -126,6 +136,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
          }
         }
       }
+      */
     }
 
 }
