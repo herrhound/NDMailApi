@@ -79,12 +79,11 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
         put {
           complete {
             RegisterUser(system, ent)
-             //new NDApiResponse[String](ErrorStatus.None, "", RegisterUser(system, ent))
+            //new NDApiResponse[String](ErrorStatus.None, "", RegisterUser(system, ent))
           }
         }
       }
-    }
-
+    } ~
     path("registerdevice") {
       entity(as[DeviceRegisterModel]) { ent =>
         put {
@@ -99,14 +98,16 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
           }
         }
       }
-    }
-
-    path("oauth2callback"){
-        get {
-          complete {
-            System.out.println("123")
-            new NDApiResponse[String](ErrorStatus.None, "Test", "123")
+    } ~
+      path("oauth2callback") {
+        parameter("code") {
+          code => {
+            get {
+              complete {
+                code
+              }
+            }
           }
         }
-    }
+      }
 }
