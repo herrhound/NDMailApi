@@ -104,7 +104,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
           code => {
             get {
               complete {
-                code
+                code.toString()
               }
             }
           }
