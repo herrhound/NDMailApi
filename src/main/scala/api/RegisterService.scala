@@ -104,6 +104,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
     path("oauth2callback") {
       entity(as[String]) { ent =>
         get {
+          errorLogger.info("oauth2callback : ",ent)
           complete {
             val code = ent
             val client_id = "783241267105-s1si6l0t9h1dat18gih2j5bphg7st307.apps.googleusercontent.com"
@@ -115,7 +116,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
 
             val pipeline: HttpRequest => Future[GoogleToken] = (
               sendReceive
-              ~> setContentType(MediaTypes.`application/json`)
+              //~> setContentType(MediaTypes.`application/json`)
               //~> encode(Gzip)
               //~> decode(Deflate)
               ~>unmarshal[GoogleToken]
