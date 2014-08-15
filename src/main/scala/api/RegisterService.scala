@@ -102,13 +102,11 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
     }
 
     path("oauth2callback"){
-      parameter('code) { code =>
         get {
           complete {
-            System.out.println(code)
-            new NDApiResponse[String](ErrorStatus.None, "Test", code)
+            System.out.println("123")
+            new NDApiResponse[String](ErrorStatus.None, "Test", "123")
           }
         }
-      }
     }
 }
