@@ -103,32 +103,26 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
 
     path("oauth2callback") {
       entity(as[String]) { ent =>
-        //get {
+        get {
           complete {
-            ""
-              //val response: GoogleToken = GetGoogleAccessToken(system, ent)
-
-          /*
             val code = ent
             val client_id = "783241267105-s1si6l0t9h1dat18gih2j5bphg7st307.apps.googleusercontent.com"
             val client_secret = "MbSGiXXwLPaanFbJSVseW9qs"
             val redirect_uri = "http://dry-atoll-6423.herokuapp.com/oauth2callback"
             val grant_type = "authorization_code"
 
-          //implicit val system = ActorSystem()
-          import system.dispatcher // execution context for futures
-          val pipeline: HttpRequest => Future[GoogleToken] = (
+            implicit val system = ActorSystem()
+
+            val pipeline: HttpRequest => Future[GoogleToken] = (
               sendReceive
               ~> setContentType(MediaTypes.`application/json`)
-              ~> encode(Gzip)
-              ~> decode(Deflate)
+              //~> encode(Gzip)
+              //~> decode(Deflate)
               ~>unmarshal[GoogleToken]
-          )
-          pipeline(Post(s"https://accounts.google.com/o/oauth2/token?code=$code&client_id=$client_id&client_secret=$client_secret&redirect_uri=$redirect_uri&grant_type=$grant_type"))
-          */
-
-          }
-        //}
+            )
+            pipeline(Post(s"https://accounts.google.com/o/oauth2/token?code=$code&client_id=$client_id&client_secret=$client_secret&redirect_uri=$redirect_uri&grant_type=$grant_type"))
+         }
+        }
       }
     }
 
