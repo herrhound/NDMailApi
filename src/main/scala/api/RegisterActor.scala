@@ -34,6 +34,9 @@ object RegisterActor extends WebClient with NDApiLogging with NDApiUtil with  De
 
   implicit val GoogleTokenFormater = jsonFormat4(GoogleToken)
 
+  var apiAccessToken: Option[GoogleToken] = None
+
+
   def post(url: String)(implicit system: ActorSystem): Future[String] = {
     import system.dispatcher
 
@@ -151,29 +154,31 @@ object RegisterActor extends WebClient with NDApiLogging with NDApiUtil with  De
   }
 
 
-  //def GetGoogleAccessToken(system: ActorSystem, model: String): Some(GoogleToken) = {
-  //    None
-    /*
-    val code = model
+  def GetGoogleAccessToken(code: String): Future[Option[GoogleToken]] = {
     val client_id = "783241267105-s1si6l0t9h1dat18gih2j5bphg7st307.apps.googleusercontent.com"
     val client_secret = "MbSGiXXwLPaanFbJSVseW9qs"
     val redirect_uri = "http://dry-atoll-6423.herokuapp.com/oauth2callback"
     val grant_type = "authorization_code"
 
-    //implicit val system = ActorSystem()
-    import system.dispatcher // execution context for futures
-    val pipeline: HttpRequest => Future[HttpResponse] = (
-         sendReceive
-          ~> setContentType(MediaTypes.`application/json`)
-          ~> encode(Gzip)
-          ~> decode(Deflate)
-          ~>unmarshal[GoogleToken]
+    implicit val system = ActorSystem()
+    import scala.concurrent.ExecutionContext.Implicits.global
+
+    val pipeline: HttpRequest => Future[Option[GoogleToken]] = (
+        encode(Gzip)
+        ~> addHeader("Accept","application/json")
+        ~> sendReceive
+        ~> decode(Deflate)
+        ~> unmarshal[Option[GoogleToken]]
         )
-
     pipeline(Post(s"https://accounts.google.com/o/oauth2/token?code=$code&client_id=$client_id&client_secret=$client_secret&redirect_uri=$redirect_uri&grant_type=$grant_type"))
-    */
+  }
 
-  //}
+  def getAccessToken: Future[Option[GoogleToken]] = {
+    apiAccessToken match {
+      case Some(token) => Future.successful(apiAccessToken)
+      case None        => Future.successful(None)
+    }
+  }
 
   def MapDevice(system: ActorSystem, model: DeviceRegisterModel): String = {
     try {
