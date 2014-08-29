@@ -4,55 +4,18 @@ import akka.actor.{Props, ActorSystem, ActorRef}
 import scala.concurrent.{Future, ExecutionContext}
 import spray.routing.Directives
 
-
-import models.ndapidtos._
 import api.RegisterActor._
 import models.{GoogleToken, OAuth2CallbackModel, ErrorStatus, NDApiResponse}
-import spray.httpx.encoding.{Gzip, Deflate}
-
-import models.GoogleToken
 import models.ndapidtos.UserRegisterDTO
 import models.ndapidtos.DeviceRegisterModel
-import models.NDApiResponse
-import models.OAuth2CallbackModel
-import spray.http.HttpRequest
-import models.GoogleToken
-import models.ndapidtos.UserRegisterDTO
-import models.ndapidtos.DeviceRegisterModel
-import models.NDApiResponse
-import models.OAuth2CallbackModel
-import spray.http.HttpRequest
-import models.ndapidtos.UserRegisterDTO
-import models.NDApiResponse
-import spray.http.HttpResponse
-import models.GoogleToken
-import models.ndapidtos.DeviceRegisterModel
-import models.OAuth2CallbackModel
-
-// HTTP related imports
-import spray.http._
-import spray.client.pipelining._
-
-import spray.http.HttpHeaders.Accept
-import shapeless.~>
-import spray.util._
 
 // Futures related imports
 import scala.concurrent.Future
 import scala.util.{ Success, Failure }
 
-import spray.httpx.SprayJsonSupport._
-import spray.client._
-
 /**
  * Created by nikolatonkev on 2014-05-20.
  */
-
-/*
-trait WebClient {
-  def post(url: String): Future[GoogleToken]
-}
-*/
 
 class RegisterService(system: ActorSystem, registering: ActorRef)(implicit context: ExecutionContext)
   extends Directives with  DefaultJsonFormats  {
@@ -76,7 +39,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
   val route =
     path("registeruser") {
       entity(as[UserRegisterDTO]) { ent =>
-        put {
+        post {
           complete {
             RegisterUser(system, ent)
             //new NDApiResponse[String](ErrorStatus.None, "", RegisterUser(system, ent))
@@ -86,7 +49,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
     } ~
     path("registerdevice") {
       entity(as[DeviceRegisterModel]) { ent =>
-        put {
+        post {
           complete {
             val authguid = RegisterDevice(system, ent)
             if(authguid !=  "") {
@@ -100,12 +63,14 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
       }
     } ~
     path("oauth2callback") {
-      get {
+      post {
         parameter("code") {
           code => {
             onComplete(GetGoogleAccessToken(code)) {
-              case Success(token) =>
+              case Success(token) => {
+                //TODO: get user info from google
                 complete(new NDApiResponse[String](ErrorStatus.None, "", token.toString()))
+              }
               case Failure(ex) =>
                 complete(new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", ""))
               }

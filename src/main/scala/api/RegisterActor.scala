@@ -23,43 +23,14 @@ import models.ndapidtos.DeviceRegisterModel
 import models.auth.UserDevice
 
 
-trait WebClient {
-  def post(url: String)(implicit system: ActorSystem): Future[String]
-}
-
 /**
  * Created by nikolatonkev on 2014-05-20.
  */
-object RegisterActor extends WebClient with NDApiLogging with NDApiUtil with  DefaultJsonFormats {
+object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormats {
 
   implicit val GoogleTokenFormater = jsonFormat4(GoogleToken)
 
   var apiAccessToken: Option[GoogleToken] = None
-
-
-  def post(url: String)(implicit system: ActorSystem): Future[String] = {
-    import system.dispatcher
-
-    val code = ""
-    val client_id = "783241267105-s1si6l0t9h1dat18gih2j5bphg7st307.apps.googleusercontent.com"
-    val client_secret = "MbSGiXXwLPaanFbJSVseW9qs"
-    val redirect_uri = "http://dry-atoll-6423.herokuapp.com/oauth2callback"
-    val grant_type = "authorization_code"
-
-    val pipeline: HttpRequest => Future[HttpResponse] = sendReceive
-    /*
-    (
-        sendReceive
-        ~> setContentType(MediaTypes.`application/json`)
-        //~> encode(Gzip)
-        //~> decode(Deflate)
-        //~>unmarshal[GoogleToken]
-      )
-    */
-
-    val r = pipeline (Post(s"https://accounts.google.com/o/oauth2/token?code=$code&client_id=$client_id&client_secret=$client_secret&redirect_uri=$redirect_uri&grant_type=$grant_type"))
-    r.map(_.entity.asString)
-  }
 
   def GetUserByEmail(email: String, database: Database) = {
     val user = database.withSession {
@@ -107,7 +78,6 @@ object RegisterActor extends WebClient with NDApiLogging with NDApiUtil with  De
       try {
         val userId = GetNewUUID
         val applicationId = UUID.fromString("e75b92a3-3299-4407-a913-c5ca196b3cab")
-        //val user = new User(userId, model.userName, Option(model.email), token, tokenexpirydate, Id, verifiedemail, givenname, surname, link, picture, gender, /* model.secretQuestion,model.secretAnswer, model.userPassword,*/ Option(applicationId))
         val user = new User(userId, model.username, model.email, model.token, model.tokenexpirydate, model.Id, model.verifiedemail, model.givenname, model.surname, model.link, model.picture, model.gender, /* model.secretQuestion,model.secretAnswer, model.userPassword,*/ Option(applicationId))
         println(user.toString)
         database.withSession{
@@ -149,37 +119,6 @@ object RegisterActor extends WebClient with NDApiLogging with NDApiUtil with  De
     }
   }
 
-  def setContentType(mediaType: MediaType)(r: HttpResponse): HttpResponse = {
-    r.withEntity(HttpEntity(ContentType(mediaType), r.entity.data))
-  }
-
-
-  def GetGoogleAccessToken(code: String): Future[Option[GoogleToken]] = {
-    val client_id = "783241267105-s1si6l0t9h1dat18gih2j5bphg7st307.apps.googleusercontent.com"
-    val client_secret = "MbSGiXXwLPaanFbJSVseW9qs"
-    val redirect_uri = "http://dry-atoll-6423.herokuapp.com/oauth2callback"
-    val grant_type = "authorization_code"
-
-    implicit val system = ActorSystem()
-    import scala.concurrent.ExecutionContext.Implicits.global
-
-    val pipeline: HttpRequest => Future[Option[GoogleToken]] = (
-        encode(Gzip)
-        ~> addHeader("Accept","application/json")
-        ~> sendReceive
-        ~> decode(Deflate)
-        ~> unmarshal[Option[GoogleToken]]
-        )
-    pipeline(Post(s"https://accounts.google.com/o/oauth2/token?code=$code&client_id=$client_id&client_secret=$client_secret&redirect_uri=$redirect_uri&grant_type=$grant_type"))
-  }
-
-  def getAccessToken: Future[Option[GoogleToken]] = {
-    apiAccessToken match {
-      case Some(token) => Future.successful(apiAccessToken)
-      case None        => Future.successful(None)
-    }
-  }
-
   def MapDevice(system: ActorSystem, model: DeviceRegisterModel): String = {
     try {
       val database = dao.GetDataBase(system)
@@ -212,6 +151,26 @@ object RegisterActor extends WebClient with NDApiLogging with NDApiUtil with  De
       ""
     }
   }
+
+  def GetGoogleAccessToken(code: String): Future[Option[GoogleToken]] = {
+    val client_id = "783241267105-s1si6l0t9h1dat18gih2j5bphg7st307.apps.googleusercontent.com"
+    val client_secret = "MbSGiXXwLPaanFbJSVseW9qs"
+    val redirect_uri = "https://dry-atoll-6423.herokuapp.com/oauth2callback"
+    val grant_type = "authorization_code"
+
+    implicit val system = ActorSystem()
+    import scala.concurrent.ExecutionContext.Implicits.global
+
+    val pipeline: HttpRequest => Future[Option[GoogleToken]] = (
+      encode(Gzip)
+        ~> addHeader("Accept","application/json")
+        ~> sendReceive
+        ~> decode(Deflate)
+        ~> unmarshal[Option[GoogleToken]]
+      )
+    pipeline(Post(s"https://accounts.google.com/o/oauth2/token?code=$code&client_id=$client_id&client_secret=$client_secret&redirect_uri=$redirect_uri&grant_type=$grant_type"))
+  }
+
 }
 
 class RegisterActor extends Actor {
@@ -222,7 +181,7 @@ class RegisterActor extends Actor {
   def receive = {
     case (model: DeviceRegisterModel) => sender ! RegisterDevice(system, model)
     case (model: UserRegisterDTO) => sender ! RegisterUser(system, model)
-    //case (model: String) => sender ! GetGoogleAccessToken(system, model)
+    case (code: String) => sender ! GetGoogleAccessToken(code)
   }
 
 }
