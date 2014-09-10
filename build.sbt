@@ -31,5 +31,6 @@ libraryDependencies ++= Seq(
   "joda-time"            % "joda-time"          % "2.3",
   "org.joda"             % "joda-convert"       % "1.5",
   "com.github.tototoshi" %% "slick-joda-mapper" % "1.1.0",
-  "commons-daemon"       %  "commons-daemon"    % "1.0.15"
+  "commons-daemon"       %  "commons-daemon"    % "1.0.15",
+  "org.json4s"          %% "json4s-native"      % "3.2.10"
 )

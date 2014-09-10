@@ -5,9 +5,25 @@ import scala.concurrent.{Future, ExecutionContext}
 import spray.routing.Directives
 
 import api.RegisterActor._
-import models.{GoogleToken, OAuth2CallbackModel, ErrorStatus, NDApiResponse}
+import models.{OAuth2CallbackModel, ErrorStatus, NDApiResponse}
 import models.ndapidtos.UserRegisterDTO
 import models.ndapidtos.DeviceRegisterModel
+import models.GoogleJsonProtocol._
+
+
+import models.NDApiResponse
+import models.OAuth2CallbackModel
+import spray.http.HttpRequest
+import models.ndapidtos.UserRegisterDTO
+import models.ndapidtos.DeviceRegisterModel
+import models.NDApiResponse
+import models.OAuth2CallbackModel
+import spray.http.HttpRequest
+import models.ndapidtos.UserRegisterDTO
+import models.NDApiResponse
+import spray.http.HttpResponse
+import models.ndapidtos.DeviceRegisterModel
+import models.OAuth2CallbackModel
 
 // Futures related imports
 import scala.concurrent.Future
@@ -18,7 +34,7 @@ import scala.util.{ Success, Failure }
  */
 
 class RegisterService(system: ActorSystem, registering: ActorRef)(implicit context: ExecutionContext)
-  extends Directives with  DefaultJsonFormats  {
+  extends Directives with DefaultJsonFormats  {
 
   import ExecutionContext.Implicits.global
 
@@ -37,7 +53,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
   //http PUT http://dry-atoll-6423.herokuapp.com/register < register.json
   //http PUT http://dry-atoll-6423.herokuapp.com/registeruser < registeruser.json
   val route =
-    path("registeruser") {
+/*    path("registeruser") {
       entity(as[UserRegisterDTO]) { ent =>
         post {
           complete {
@@ -61,21 +77,20 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
           }
         }
       }
-    } ~
+    } ~*/
     path("oauth2callback") {
       post {
         parameter("code") {
           code => {
-            onComplete(GetGoogleAccessToken(code)) {
-              case Success(token) => {
-                //TODO: get user info from google
-                complete(new NDApiResponse[String](ErrorStatus.None, "", token.toString()))
-              }
-              case Failure(ex) =>
-                complete(new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", ""))
+           GetGoogleAccessToken(code).onComplete {
+              //case Success(token) => complete(new NDApiResponse[String](ErrorStatus.None, "Authenticated", ""))
+              //case Failure(ex) => complete(new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", ""))
+             case Success(token) => complete(token)
+             case Failure(ex) => complete(ex)
               }
             }
+           Null => new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
           }
         }
-      }
+    }
 }

@@ -1,26 +1,23 @@
 package api
 
-import akka.actor.{ActorSystem, Actor}
-import models.ndapidtos._
+import akka.actor.{ActorRef, ActorSystem, Actor}
 import utils.{NDApiLogging}
-import models.{GoogleToken, ErrorStatus, NDApiResponse}
+import models.{GoogleJsonProtocol, ErrorStatus, NDApiResponse}
 import scala.slick.driver.PostgresDriver.simple._
 import dal._
-import models.auth._
 import utils._
 import java.util.UUID
-import spray.http._
 import scala.concurrent.Future
 import spray.client.pipelining._
 import spray.httpx.encoding.{Deflate, Gzip}
-import spray.http.HttpRequest
-import spray.http.HttpResponse
 import models.ndapidtos.UserRegisterDTO
 import models.NDApiResponse
 import models.auth.User
-import models.GoogleToken
 import models.ndapidtos.DeviceRegisterModel
 import models.auth.UserDevice
+import models.GoogleJsonProtocol._
+import scala.util.{Failure, Success}
+
 
 
 /**
@@ -28,9 +25,9 @@ import models.auth.UserDevice
  */
 object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormats {
 
-  implicit val GoogleTokenFormater = jsonFormat4(GoogleToken)
+  //implicit val GoogleTokenFormater = jsonFormat4(GoogleToken)
 
-  var apiAccessToken: Option[GoogleToken] = None
+  var apiAccessToken: Option[GoogleJsonProtocol.GoogleToken] = None
 
   def GetUserByEmail(email: String, database: Database) = {
     val user = database.withSession {
@@ -152,7 +149,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     }
   }
 
-  def GetGoogleAccessToken(code: String): Future[Option[GoogleToken]] = {
+  def GetGoogleAccessToken(code: String) : Future[GoogleToken] = {
     val client_id = "783241267105-s1si6l0t9h1dat18gih2j5bphg7st307.apps.googleusercontent.com"
     val client_secret = "MbSGiXXwLPaanFbJSVseW9qs"
     val redirect_uri = "https://dry-atoll-6423.herokuapp.com/oauth2callback"
@@ -161,14 +158,17 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     implicit val system = ActorSystem()
     import scala.concurrent.ExecutionContext.Implicits.global
 
-    val pipeline: HttpRequest => Future[Option[GoogleToken]] = (
-      encode(Gzip)
-        ~> addHeader("Accept","application/json")
+    val pipeline = (
+           addHeader("Accept","application/json")
+        //~> encode(Gzip)
         ~> sendReceive
-        ~> decode(Deflate)
-        ~> unmarshal[Option[GoogleToken]]
+        //~> decode(Deflate)
+        ~> unmarshal[GoogleToken]
       )
-    pipeline(Post(s"https://accounts.google.com/o/oauth2/token?code=$code&client_id=$client_id&client_secret=$client_secret&redirect_uri=$redirect_uri&grant_type=$grant_type"))
+
+    pipeline{Post("https://accounts.google.com/o/oauth2/token",
+      GoogleTokenRequest(code, client_id, client_secret, redirect_uri, grant_type))}
+
   }
 
 }
