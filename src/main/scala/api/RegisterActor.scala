@@ -171,7 +171,6 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
 
     pipeline{Post("https://accounts.google.com/o/oauth2/token",
       GoogleTokenRequest(code, client_id, client_secret, redirect_uri, grant_type))}
-
   }
 
 }
