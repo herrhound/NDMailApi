@@ -76,7 +76,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
                complete(token)
              }
              case Failure(ex) => {
-               println("Failure")
+               println("Failure : "+ex.toString())
                complete(ex)
              }
               }
