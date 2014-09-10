@@ -6,27 +6,13 @@ import spray.routing.Directives
 
 import api.RegisterActor._
 import models.{OAuth2CallbackModel, ErrorStatus, NDApiResponse}
-import models.ndapidtos.UserRegisterDTO
-import models.ndapidtos.DeviceRegisterModel
 import models.GoogleJsonProtocol._
 
 
-import models.NDApiResponse
-import models.OAuth2CallbackModel
-import spray.http.HttpRequest
-import models.ndapidtos.UserRegisterDTO
-import models.ndapidtos.DeviceRegisterModel
-import models.NDApiResponse
-import models.OAuth2CallbackModel
-import spray.http.HttpRequest
 import models.ndapidtos.UserRegisterDTO
 import models.NDApiResponse
-import spray.http.HttpResponse
 import models.ndapidtos.DeviceRegisterModel
 import models.OAuth2CallbackModel
-
-// Futures related imports
-import scala.concurrent.Future
 import scala.util.{ Success, Failure }
 
 /**

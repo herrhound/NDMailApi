@@ -150,6 +150,9 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
   }
 
   def GetGoogleAccessToken(code: String) : Future[GoogleToken] = {
+
+    println(code)
+
     val client_id = "783241267105-s1si6l0t9h1dat18gih2j5bphg7st307.apps.googleusercontent.com"
     val client_secret = "MbSGiXXwLPaanFbJSVseW9qs"
     val redirect_uri = "https://dry-atoll-6423.herokuapp.com/oauth2callback"
@@ -160,9 +163,9 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
 
     val pipeline = (
            addHeader("Accept","application/json")
-        //~> encode(Gzip)
+        ~> encode(Gzip)
         ~> sendReceive
-        //~> decode(Deflate)
+        ~> decode(Deflate)
         ~> unmarshal[GoogleToken]
       )
 
