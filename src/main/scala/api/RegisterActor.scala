@@ -153,8 +153,8 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
 
     println(code)
 
-    val client_id = "783241267105-s1si6l0t9h1dat18gih2j5bphg7st307.apps.googleusercontent.com"
-    val client_secret = "MbSGiXXwLPaanFbJSVseW9qs"
+    val client_id = "783241267105-bc7pq09tr1nnogat72r9tgmaeg2mre28.apps.googleusercontent.com"
+    val client_secret = "xhcDpKvdxzVwb3-Dt_fNQWze"
     val redirect_uri = "https://dry-atoll-6423.herokuapp.com/oauth2callback"
     val grant_type = "authorization_code"
 
