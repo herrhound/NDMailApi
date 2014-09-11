@@ -149,7 +149,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     }
   }
 
-  def GetGoogleAccessToken(code: String) : Future[GoogleToken] = {
+  def GetGoogleAccessToken(grant_type: String, code: String) : Future[GoogleToken] = {
 
     println(code)
 
@@ -183,7 +183,7 @@ class RegisterActor extends Actor {
   def receive = {
     case (model: DeviceRegisterModel) => sender ! RegisterDevice(system, model)
     case (model: UserRegisterDTO) => sender ! RegisterUser(system, model)
-    case (code: String) => sender ! GetGoogleAccessToken(code)
+    case (grant_type: String, code: String) => sender ! GetGoogleAccessToken(grant_type, code)
   }
 
 }

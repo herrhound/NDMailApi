@@ -68,7 +68,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
       post {
         parameter("code") {
           code => {
-           GetGoogleAccessToken(code).onComplete {
+           GetGoogleAccessToken("authorization_code", code).onComplete {
               //case Success(token) => complete(new NDApiResponse[String](ErrorStatus.None, "Authenticated", ""))
               //case Failure(ex) => complete(new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", ""))
              case Success(token) => {
