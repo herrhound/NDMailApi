@@ -153,10 +153,17 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
 
     println(code)
 
-    val client_id = "783241267105-bc7pq09tr1nnogat72r9tgmaeg2mre28.apps.googleusercontent.com"
-    val client_secret = "xhcDpKvdxzVwb3-Dt_fNQWze"
-    val redirect_uri = "http://dry-atoll-6423.herokuapp.com/oauth2callback"
+//    val client_id = "783241267105-bc7pq09tr1nnogat72r9tgmaeg2mre28.apps.googleusercontent.com"
+//    val client_secret = "xhcDpKvdxzVwb3-Dt_fNQWze"
+//    val redirect_uri = "https://dry-atoll-6423.herokuapp.com/oauth2callback"
+//    val grant_type = "authorization_code"
+    val client_id = "755255343089-oah0n3irag6sbho9hsu0g7t33th5vjhf.apps.googleusercontent.com"
+    val client_secret = "_wju5N4VCzK71fLIy25_zFUO"
+    val redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
     val grant_type = "authorization_code"
+
+
+
 
     implicit val system = ActorSystem()
     import scala.concurrent.ExecutionContext.Implicits.global
