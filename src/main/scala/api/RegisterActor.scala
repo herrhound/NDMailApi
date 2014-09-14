@@ -17,7 +17,7 @@ import models.ndapidtos.DeviceRegisterModel
 import models.auth.UserDevice
 import models.GoogleJsonProtocol._
 import scala.util.{Failure, Success}
-
+import spray.http.FormData
 
 
 /**
@@ -163,19 +163,27 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
 //    val redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
 //    val grant_type = "authorization_code"
 
+    //import ExecutionContext.Implicits.global
+    //import system.dispatcher
+
     implicit val system = ActorSystem()
     import scala.concurrent.ExecutionContext.Implicits.global
 
     val pipeline = (
-           addHeader("Accept","application/json")
+           //addHeader("Accept","application/json")
+           addHeader("Content-Type","application/x-www-form-urlencoded")
         //~> encode(Gzip)
         ~> sendReceive
         //~> decode(Deflate)
         ~> unmarshal[GoogleToken]
       )
     val request:GoogleTokenRequest = new GoogleTokenRequest(grant_type, code, client_id, client_secret, redirect_uri)
-    println("Request: "+request.toString())
-    pipeline{Post("https://accounts.google.com/o/oauth2/token", request)}
+    //println("Request: "+request.toString())
+    //pipeline{Post("https://accounts.google.com/o/oauth2/token", request)}
+    pipeline{
+      Post("https://accounts.google.com/o/oauth2/token", FormData(Map("grant_type" -> "authorization_code",
+        "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri)))
+    }
   }
 
 }
