@@ -172,9 +172,9 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     val pipeline = (
            //addHeader("Accept","application/json")
            addHeader("Content-Type","application/x-www-form-urlencoded")
-        //~> encode(Gzip)
+        ~> encode(Gzip)
         ~> sendReceive
-        //~> decode(Deflate)
+        ~> decode(Deflate)
         ~> unmarshal[GoogleToken]
       )
     val request:GoogleTokenRequest = new GoogleTokenRequest(grant_type, code, client_id, client_secret, redirect_uri)
