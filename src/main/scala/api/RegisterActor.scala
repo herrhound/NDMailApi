@@ -177,11 +177,11 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
         ~> decode(Deflate)
         ~> unmarshal[GoogleToken]
       )
-    val request:GoogleTokenRequest = new GoogleTokenRequest(grant_type, code, client_id, client_secret, redirect_uri)
+    //val request:GoogleTokenRequest = new GoogleTokenRequest(grant_type, code, client_id, client_secret, redirect_uri)
     //println("Request: "+request.toString())
     //pipeline{Post("https://accounts.google.com/o/oauth2/token", request)}
     pipeline{
-      Post("https://accounts.google.com/o/oauth2/token", FormData(Map("grant_type" -> "authorization_code",
+      Post("https://accounts.google.com/o/oauth2/token", FormData(Seq("grant_type" -> "authorization_code",
         "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri)))
     }
   }
