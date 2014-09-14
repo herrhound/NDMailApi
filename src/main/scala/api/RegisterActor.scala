@@ -163,22 +163,19 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
 //    val redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
 //    val grant_type = "authorization_code"
 
-
-
-
     implicit val system = ActorSystem()
     import scala.concurrent.ExecutionContext.Implicits.global
 
     val pipeline = (
            addHeader("Accept","application/json")
-        ~> encode(Gzip)
+        //~> encode(Gzip)
         ~> sendReceive
-        ~> decode(Deflate)
+        //~> decode(Deflate)
         ~> unmarshal[GoogleToken]
       )
-
-    pipeline{Post("https://accounts.google.com/o/oauth2/token",
-      GoogleTokenRequest(code, client_id, client_secret, redirect_uri, grant_type))}
+    val request:GoogleTokenRequest = new GoogleTokenRequest(grant_type, code, client_id, client_secret, redirect_uri)
+    println("Request: "+request.toString())
+    pipeline{Post("https://accounts.google.com/o/oauth2/token", request)}
   }
 
 }

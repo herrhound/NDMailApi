@@ -15,8 +15,7 @@ object GoogleJsonProtocol extends Json4sSupport {
 
   //case class GoogleUserInfo(username: String, email: String)
 
-  case class GoogleTokenRequest(code: String, client_id: String, client_secret: String, redirect_uri: String,
-                                grant_type: String)
+  case class GoogleTokenRequest(grant_type: String, code: String, client_id: String, client_secret: String, redirect_uri: String)
 
 }
 
