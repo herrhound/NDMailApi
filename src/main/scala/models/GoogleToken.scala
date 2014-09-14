@@ -11,7 +11,7 @@ object GoogleJsonProtocol extends Json4sSupport {
 
   override implicit def json4sFormats: Formats = DefaultFormats
 
-  case class GoogleToken(access_token: String, refresh_token: String, expires_in: Int, token_type: String)
+  case class GoogleToken(access_token: String, expires_in: Int, id_token: String, refresh_token: String, token_type: String)
 
   //case class GoogleUserInfo(username: String, email: String)
 

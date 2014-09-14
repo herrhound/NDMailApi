@@ -29,7 +29,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
   implicit val NDResponseFormater = jsonFormat3(NDApiResponse[Boolean])
   implicit val NDRegisterDeviceResponseFormater = jsonFormat3(NDApiResponse[String])
   implicit val OAuth2CallbackFormater = jsonFormat5(OAuth2CallbackModel)
-  implicit val GoogleTokenFormater = jsonFormat4(GoogleToken)
+  implicit val GoogleTokenFormater = jsonFormat5(GoogleToken)
 
 
   //http PUT http://localhost:8080/registeruser < registeruser.json
