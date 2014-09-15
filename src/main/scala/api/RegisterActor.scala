@@ -198,7 +198,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
 //      "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri))
     //val formData = FormData(Seq("grant_type" -> "authorization_code",
     //  "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri)).asInstanceOf[HttpData.NonEmpty]
-    val formData = FormData(List(("grant_type", "authorization_code"), ("code", code), ("client_id", client_id), ("client_secret", client_secret), ("redirect_uri", redirect_uri)))
+    val formData = FormData(Seq(("grant_type", "authorization_code"), ("code", code), ("client_id", client_id), ("client_secret", client_secret), ("redirect_uri", redirect_uri)))
 
     //val httpData = HttpData(formData.asInstanceOf[HttpData.NonEmpty].toString())
     //val entity = HttpEntity.NonEmpty(ContentType(MediaTypes.`application/x-www-form-urlencoded`), Some(formData).asInstanceOf[HttpData.NonEmpty])
