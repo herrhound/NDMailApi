@@ -183,8 +183,8 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     import scala.concurrent.ExecutionContext.Implicits.global
 
     val pipeline = (
-           addHeader("Accept","application/json")
-           //addHeader("Content-Type","application/x-www-form-urlencoded")
+           //addHeader("Accept","application/json")
+           addHeader("Content-Type","application/x-www-form-urlencoded")
         ~> encode(Gzip)
         ~> sendReceive
         ~> decode(Deflate)
