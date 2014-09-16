@@ -203,11 +203,11 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     //val httpData = HttpData(formData.asInstanceOf[HttpData.NonEmpty].toString())
     //val entity = HttpEntity.NonEmpty(ContentType(MediaTypes.`application/x-www-form-urlencoded`), Some(HttpData(raw)))
 
-    //val raw = "grant_type=authorization_code&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
+    val raw = "grant_type=authorization_code&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
     //val data = Some(raw)
 
     pipeline{
-      Post("https://accounts.google.com/o/oauth2/token", request)
+      Post("https://accounts.google.com/o/oauth2/token", HttpEntity(ContentType(MediaTypes.`application/x-www-form-urlencoded`), raw))
       //Post("https://accounts.google.com/o/oauth2/token", data)
     }
   }
