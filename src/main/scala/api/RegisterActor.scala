@@ -184,8 +184,8 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
 
     val pipeline = (
            //addHeader("Accept","application/json")
-           //addHeader("Content-Type","application/x-www-form-urlencoded")
-          encode(Gzip)
+         addHeader("Content-Type","application/x-www-form-urlencoded")
+        ~> encode(Gzip)
         ~> sendReceive
         ~> decode(Deflate)
         ~> unmarshal[GoogleToken]
@@ -207,9 +207,9 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     //val data = Some(raw)
 
     pipeline{
-      Post("https://accounts.google.com/o/oauth2/token",
-        HttpEntity(ContentType(MediaTypes.`application/json`), """{ "grant_type": "authorization_code", "code" : """ + code + """, "client_id": """ + client_id + """, "client_secret": """ + client_secret + """, "redirect_uri": """ + redirect_uri + """ }"""))
-      //Post("https://accounts.google.com/o/oauth2/token", data)
+      //Post("https://accounts.google.com/o/oauth2/token",
+      //  HttpEntity(ContentType(MediaTypes.`application/json`), """{ "grant_type": "authorization_code", "code" : """ + code + """, "client_id": """ + client_id + """, "client_secret": """ + client_secret + """, "redirect_uri": """ + redirect_uri + """ }"""))
+      Post("https://accounts.google.com/o/oauth2/token?grant_type=$grant_type&code=$code&client_id=$client_id&client_secret=$client_secret&redirect_uri=$redirect_uri")
     }
   }
 
