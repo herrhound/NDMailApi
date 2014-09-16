@@ -207,7 +207,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     val data = Some(formData)
     pipeline{
       //Post("https://accounts.google.com/o/oauth2/token").withEntity(entity)
-      Post("https://accounts.google.com/o/oauth2/token", content=data)
+      Post("https://accounts.google.com/o/oauth2/token", data)
     }
   }
 
