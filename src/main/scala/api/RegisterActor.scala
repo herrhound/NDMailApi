@@ -38,7 +38,7 @@ import spray.httpx.marshalling.Marshaller
  */
 object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormats {
 
-  //implicit val GoogleTokenFormater = jsonFormat4(GoogleToken)
+  implicit val GoogleTokenRequestFormater = jsonFormat5(GoogleTokenRequest)
 
   var apiAccessToken: Option[GoogleJsonProtocol.GoogleToken] = None
 
