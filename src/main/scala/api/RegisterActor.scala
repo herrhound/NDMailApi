@@ -195,19 +195,27 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     //pipeline{Post("https://accounts.google.com/o/oauth2/token", request)}
 
     //val formData = FormData(Map("grant_type" -> grant_type, "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri))
-    val formData = FormData(Seq("grant_type" -> "authorization_code",
-      "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri)).asInstanceOf[HttpData.NonEmpty]
+    //val formData = FormData(Seq("grant_type" -> grant_type,
+    //  "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri))
     //val formData = FormData(Seq(("grant_type", "authorization_code"), ("code", code), ("client_id", client_id), ("client_secret", client_secret), ("redirect_uri", redirect_uri)))
 
     //val raw = "grant_type=authorization_code&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
-    val httpData = HttpData(formData.asInstanceOf[HttpData.NonEmpty].toString())
-    //val entity = HttpEntity.NonEmpty(ContentType(MediaTypes.`application/x-www-form-urlencoded`), Some(formData).asInstanceOf[HttpData.NonEmpty])
+    //val httpData = HttpData(formData.asInstanceOf[HttpData.NonEmpty].toString())
+    //val entity = HttpEntity.NonEmpty(ContentType(MediaTypes.`application/x-www-form-urlencoded`), Some(HttpData(raw)))
 
-    val raw = "grant_type=authorization_code&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
-    val data = Some(raw)
+    //val raw = "grant_type=authorization_code&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
+    //val data = Some(raw)
+
+    var urlParameters = Map[String, String]()
+    urlParameters += ("client_id" -> client_id)
+    urlParameters += ("client_secret" -> client_secret)
+    urlParameters += ("redirect_uri" -> redirect_uri)
+    urlParameters += ("code" -> code)
+    urlParameters += ("grant_type" -> grant_type)
+
     pipeline{
-      //Post("https://accounts.google.com/o/oauth2/token").withEntity(entity)
-      Post("https://accounts.google.com/o/oauth2/token", data)
+      Post("https://accounts.google.com/o/oauth2/token?" + urlParameters)
+      //Post("https://accounts.google.com/o/oauth2/token", data)
     }
   }
 
