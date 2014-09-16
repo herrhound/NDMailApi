@@ -194,8 +194,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     //println("Request: "+request.toString())
     //pipeline{Post("https://accounts.google.com/o/oauth2/token", request)}
 
-    val formData = FormData(Map("grant_type" -> "authorization_code",
-      "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri))
+    val formData = FormData(Map("code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri, "grant_type" -> "authorization_code"))
     //val formData = FormData(Seq("grant_type" -> "authorization_code",
     //  "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri)).asInstanceOf[HttpData.NonEmpty]
     //val formData = FormData(Seq(("grant_type", "authorization_code"), ("code", code), ("client_id", client_id), ("client_secret", client_secret), ("redirect_uri", redirect_uri)))
