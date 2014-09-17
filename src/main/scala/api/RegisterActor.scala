@@ -199,17 +199,17 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     //  "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri))
     //val formData = FormData(Seq(("grant_type", "authorization_code"), ("code", code), ("client_id", client_id), ("client_secret", client_secret), ("redirect_uri", redirect_uri)))
 
-    //val raw = "grant_type=authorization_code&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
-    //val httpData = HttpData(formData.asInstanceOf[HttpData.NonEmpty].toString())
-    //val entity = HttpEntity.NonEmpty(ContentType(MediaTypes.`application/x-www-form-urlencoded`), Some(HttpData(raw)))
-
     val raw = "grant_type=authorization_code&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
+    //val httpData = HttpData(formData.asInstanceOf[HttpData.NonEmpty].toString())
+    val entity = HttpEntity(ContentType(MediaTypes.`application/x-www-form-urlencoded`), raw)
+
+    //val raw = "grant_type=authorization_code&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
     //val data = Some(raw)
 
     pipeline{
-      //Post("https://accounts.google.com/o/oauth2/token",
+      Post("https://accounts.google.com/o/oauth2/token").withEntity(entity)
       //  HttpEntity(ContentType(MediaTypes.`application/json`), """{ "grant_type": "authorization_code", "code" : """ + code + """, "client_id": """ + client_id + """, "client_secret": """ + client_secret + """, "redirect_uri": """ + redirect_uri + """ }"""))
-      Post("https://accounts.google.com/o/oauth2/token?grant_type=$grant_type&code=$code&client_id=$client_id&client_secret=$client_secret&redirect_uri=$redirect_uri")
+      //Post("https://accounts.google.com/o/oauth2/token?grant_type=$grant_type&code=$code&client_id=$client_id&client_secret=$client_secret&redirect_uri=$redirect_uri")
     }
   }
 
