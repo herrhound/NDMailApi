@@ -8,29 +8,17 @@ import dal._
 import utils._
 import java.util.UUID
 import scala.concurrent.Future
-import spray.client.pipelining._
-import spray.httpx.marshalling
 import spray.httpx.encoding.{Deflate, Gzip}
-import models.ndapidtos.UserRegisterDTO
-import models.NDApiResponse
-import models.auth.User
-import models.ndapidtos.DeviceRegisterModel
-import models.auth.UserDevice
 import models.GoogleJsonProtocol._
 import scala.util.{Failure, Success}
 import spray.http._
-import spray.http.HttpData
 import models.ndapidtos.UserRegisterDTO
 import models.NDApiResponse
 import models.auth.User
 import models.GoogleJsonProtocol.GoogleToken
 import models.ndapidtos.DeviceRegisterModel
 import models.auth.UserDevice
-import spray.http.HttpEntity.NonEmpty
-import HttpMethods._
-import spray.can._
 import spray.client.pipelining._
-import spray.httpx.marshalling.Marshaller
 
 
 /**
@@ -171,44 +159,20 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     val redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
     val grant_type = "authorization_code"
 
-//    val client_id = "755255343089-oah0n3irag6sbho9hsu0g7t33th5vjhf.apps.googleusercontent.com"
-//    val client_secret = "_wju5N4VCzK71fLIy25_zFUO"
-//    val redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
-//    val grant_type = "authorization_code"
-
-    //import ExecutionContext.Implicits.global
-    //import system.dispatcher
-
     implicit val system = ActorSystem()
     import scala.concurrent.ExecutionContext.Implicits.global
 
     val pipeline = (
-           //addHeader("Accept","application/json")
-         //addHeader("Content-Type","application/x-www-form-urlencoded")
         encode(Gzip)
         ~> sendReceive
         ~> decode(Deflate)
         ~> unmarshal[GoogleToken]
       )
-    //val request: GoogleTokenRequest = new GoogleTokenRequest(grant_type, code, client_id, client_secret, redirect_uri)
-    //println("Request: "+request.toString())
-    //pipeline{Post("https://accounts.google.com/o/oauth2/token", request)}
-
-    //val formData = FormData(Map("grant_type" -> grant_type, "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri))
-    //val formData = FormData(Seq("grant_type" -> grant_type,
-    //  "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri))
-    //val formData = FormData(Seq(("grant_type", "authorization_code"), ("code", code), ("client_id", client_id), ("client_secret", client_secret), ("redirect_uri", redirect_uri)))
-
     val raw = "grant_type=" + grant_type.toString() + "&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
     val entity = HttpEntity(ContentType(MediaTypes.`application/x-www-form-urlencoded`), raw)
 
-    //val raw = "grant_type=authorization_code&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
-    //val data = Some(raw)
-
     pipeline{
       Post("https://accounts.google.com/o/oauth2/token").withEntity(entity)
-      //  HttpEntity(ContentType(MediaTypes.`application/json`), """{ "grant_type": "authorization_code", "code" : """ + code + """, "client_id": """ + client_id + """, "client_secret": """ + client_secret + """, "redirect_uri": """ + redirect_uri + """ }"""))
-      //Post("https://accounts.google.com/o/oauth2/token?grant_type=$grant_type&code=$code&client_id=$client_id&client_secret=$client_secret&redirect_uri=$redirect_uri")
     }
   }
 
