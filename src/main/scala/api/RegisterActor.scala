@@ -184,23 +184,22 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
 
     val pipeline = (
            //addHeader("Accept","application/json")
-         addHeader("Content-Type","application/x-www-form-urlencoded")
-        ~> encode(Gzip)
+         //addHeader("Content-Type","application/x-www-form-urlencoded")
+        encode(Gzip)
         ~> sendReceive
         ~> decode(Deflate)
         ~> unmarshal[GoogleToken]
       )
-    val request: GoogleTokenRequest = new GoogleTokenRequest(grant_type, code, client_id, client_secret, redirect_uri)
+    //val request: GoogleTokenRequest = new GoogleTokenRequest(grant_type, code, client_id, client_secret, redirect_uri)
     //println("Request: "+request.toString())
     //pipeline{Post("https://accounts.google.com/o/oauth2/token", request)}
 
-    val formData = FormData(Map("grant_type" -> grant_type, "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri))
+    //val formData = FormData(Map("grant_type" -> grant_type, "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri))
     //val formData = FormData(Seq("grant_type" -> grant_type,
     //  "code" -> code, "client_id" -> client_id, "client_secret" -> client_secret, "redirect_uri" -> redirect_uri))
     //val formData = FormData(Seq(("grant_type", "authorization_code"), ("code", code), ("client_id", client_id), ("client_secret", client_secret), ("redirect_uri", redirect_uri)))
 
-    val raw = "grant_type=authorization_code&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
-    //val httpData = HttpData(formData.asInstanceOf[HttpData.NonEmpty].toString())
+    val raw = "grant_type=" + grant_type.toString() + "&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
     val entity = HttpEntity(ContentType(MediaTypes.`application/x-www-form-urlencoded`), raw)
 
     //val raw = "grant_type=authorization_code&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
