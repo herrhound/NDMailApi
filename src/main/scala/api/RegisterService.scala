@@ -14,6 +14,7 @@ import models.NDApiResponse
 import models.ndapidtos.DeviceRegisterModel
 import models.OAuth2CallbackModel
 import scala.util.{ Success, Failure }
+import spray.http.HttpEntity
 
 /**
  * Created by nikolatonkev on 2014-05-20.
@@ -72,18 +73,23 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
     get {
         parameter("code") {
           code => {
-                GetGoogleAccessToken(code).onComplete {
-                  case Success(token) => {
-                    println("Google access token : " + token)
-                    complete { new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token) }
-                  }
-                  case Failure(ex) => {
-                    println("Failure : " + ex.toString())
-                    complete { new NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString()) }
-                  }
-                }
+            val result:  NDApiResponse[GoogleToken]  = GetGoogleAccessToken(code).onComplete {
+              case Success(token) => {
+                println("Google access token : " + token)
+                new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token)
               }
-            Null => val result = new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
+              case Failure(ex) => {
+                println("Failure : " + ex.toString())
+                new NDApiResponse[GoogleToken](ErrorStatus.NotAutorized, ex.toString(), new GoogleToken("",0,"","",""))
+              }
+
+            }.asInstanceOf[NDApiResponse[GoogleToken]]
+            complete(result)
+          }
+            Null => {
+              val result2 = new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
+              complete(result2)
+            }
             }
           }
         }
