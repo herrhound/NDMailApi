@@ -69,7 +69,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
     path("oauth2callback") {
       post {
         parameter("code") {
-          code => {
+          code => /*{
            GetGoogleAccessToken(code).onComplete {
               //case Success(token) => complete(new NDApiResponse[String](ErrorStatus.None, "Authenticated", ""))
               //case Failure(ex) => complete(new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", ""))
@@ -85,8 +85,9 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
                //complete(new NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString()))
              }
               }
-            }
-           Null => new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
+            }*/
+           //Null => new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
+            "Hello"
           }
         }
     }
