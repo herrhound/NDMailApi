@@ -70,25 +70,22 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
 
   path("oauth2callback") {
     post {
+      complete {
         parameter("code") {
-          code => {
-            GetGoogleAccessToken(code).onComplete {
-              //case Success(token) => complete(new NDApiResponse[String](ErrorStatus.None, "Authenticated", ""))
-              //case Failure(ex) => complete(new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", ""))
-              case Success(token) => {
-                //println("Google access token : " + token.access_token)
-                println("Google access token : " + token)
-                "Authenitcated"
-                //complete(new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token))
+                code => {
+                  GetGoogleAccessToken(code).onComplete {
+                    case Success(token) => {
+                      println("Google access token : " + token)
+                      new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token)
+                    }
+                    case Failure(ex) => {
+                      println("Failure : " + ex.toString())
+                      new NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString())
+                    }
+                  }
+                  Null => new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
+                }
               }
-              case Failure(ex) => {
-                println("Failure : " + ex.toString())
-                "Failure"
-                //complete(new NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString()))
-              }
-            }
-          Null => new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
-        }
       }
     }
   }
