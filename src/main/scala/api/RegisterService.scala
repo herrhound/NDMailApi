@@ -70,7 +70,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
     } ~*/
 
   path("oauth2callback") {
-    get {
+    post {
         parameter("code") {
           code => {
             val result:  NDApiResponse[GoogleToken]  = GetGoogleAccessToken(code).onComplete {
@@ -84,6 +84,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
               }
 
             }.asInstanceOf[NDApiResponse[GoogleToken]]
+            println("result: " + result.toString())
             complete(result)
           }
             Null => {
