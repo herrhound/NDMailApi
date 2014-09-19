@@ -76,13 +76,13 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
              case Success(token) => {
                //println("Google access token : " + token.access_token)
                println("Google access token : " + token)
-               //complete(token)
-               complete(new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token))
+               complete("Hello")
+               //complete(new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token))
              }
              case Failure(ex) => {
                println("Failure : " + ex.toString())
-               //complete(ex)
-               complete(new NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString()))
+               complete("Hello")
+               //complete(new NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString()))
              }
               }
             }
