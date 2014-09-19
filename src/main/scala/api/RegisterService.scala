@@ -70,20 +70,30 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
 
   path("oauth2callback") {
     get {
-        parameter("code") {
-          code => {
-                GetGoogleAccessToken(code).onComplete {
+      parameter("code") {
+        code =>
+          {
+            val future = GetGoogleAccessToken(code)
+
+            code => future onComplete{
+                case Success(token) => complete (NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token))
+                case Failure(ex) => complete (NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString()))
+            }
+                /*
+        { GetGoogleAccessToken(code).onComplete {
                   case Success(token) => {
                     println("Google access token : " + token)
-                    complete { new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token) }
+                    complete(NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token))
                   }
                   case Failure(ex) => {
                     println("Failure : " + ex.toString())
-                    complete { new NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString()) }
+                    complete(NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString()))
                   }
                 }
               }
-            Null => val result = new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
+            //Null => val result = new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
+            */
+         }
             }
           }
         }
