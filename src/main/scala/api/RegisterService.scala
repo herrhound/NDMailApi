@@ -74,7 +74,8 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
               //case Success(token) => complete(new NDApiResponse[String](ErrorStatus.None, "Authenticated", ""))
               //case Failure(ex) => complete(new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", ""))
              case Success(token) => {
-               println("Google access token : " + token.access_token)
+               //println("Google access token : " + token.access_token)
+               println("Google access token : " + token)
                //complete(token)
                complete(new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token))
              }
