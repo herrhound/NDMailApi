@@ -93,7 +93,6 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
             } //.asInstanceOf[NDApiResponse[GoogleToken]]
 
               complete(result.asInstanceOf[GoogleToken])
-
             //println("result: " + result.toString())
             //complete("Hello!")
 
