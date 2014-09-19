@@ -31,6 +31,8 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
   implicit val OAuth2CallbackFormater = jsonFormat5(OAuth2CallbackModel)
   implicit val GoogleTokenFormater = jsonFormat5(GoogleToken)
 
+  implicit val OAuth2CallbackSuccessFormater = jsonFormat3(NDApiResponse[GoogleToken])
+  implicit val OAuth2CallbackFailureFormater = jsonFormat3(NDApiResponse[String])
 
   //http PUT http://localhost:8080/registeruser < registeruser.json
   //http PUT http://localhost:8080/registerdevice < registerdevice.json
@@ -73,11 +75,13 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
               //case Failure(ex) => complete(new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", ""))
              case Success(token) => {
                println("Google access token : " + token.access_token)
-               complete(token)
+               //complete(token)
+               complete(new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token))
              }
              case Failure(ex) => {
                println("Failure : " + ex.toString())
-               complete(ex)
+               //complete(ex)
+               complete(new NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString()))
              }
               }
             }
