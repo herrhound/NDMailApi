@@ -33,6 +33,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
 
   implicit val OAuth2CallbackSuccessFormater = jsonFormat3(NDApiResponse[GoogleToken])
   implicit val OAuth2CallbackFailureFormater = jsonFormat3(NDApiResponse[String])
+  import spray.httpx.encoding._
 
   //http PUT http://localhost:8080/registeruser < registeruser.json
   //http PUT http://localhost:8080/registerdevice < registerdevice.json
@@ -66,29 +67,29 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
         }
       }
     } ~*/
-    path("oauth2callback") {
-      post {
+
+  path("oauth2callback") {
+    post {
         parameter("code") {
-          code => /*{
-           GetGoogleAccessToken(code).onComplete {
+          code => {
+            GetGoogleAccessToken(code).onComplete {
               //case Success(token) => complete(new NDApiResponse[String](ErrorStatus.None, "Authenticated", ""))
               //case Failure(ex) => complete(new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", ""))
-             case Success(token) => {
-               //println("Google access token : " + token.access_token)
-               println("Google access token : " + token)
-               complete("Hello")
-               //complete(new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token))
-             }
-             case Failure(ex) => {
-               println("Failure : " + ex.toString())
-               complete("Hello")
-               //complete(new NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString()))
-             }
+              case Success(token) => {
+                //println("Google access token : " + token.access_token)
+                println("Google access token : " + token)
+                "Authenitcated"
+                //complete(new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token))
               }
-            }*/
-           //Null => new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
-            "Hello"
-          }
+              case Failure(ex) => {
+                println("Failure : " + ex.toString())
+                "Failure"
+                //complete(new NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString()))
+              }
+            }
+          Null => new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
         }
+      }
     }
+  }
 }
