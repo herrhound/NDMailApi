@@ -73,49 +73,16 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
     get {
       parameter("code") {
         code => {
-          //complete("Hello: " + code.toString())
-
-          /*
-          val future = GetGoogleAccessToken(code)
-          val response = onSuccess(future) flatMap(GoogleToken) { result =>
-            println(result)
-            result
-          }
-          */
-
             onComplete(GetGoogleAccessToken(code)) {
               case Success(token) => {
                 println("Success : " + token)
-                //val stkn = new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token)
-                //stkn
-                //complete(token.asInstanceOf[GoogleToken])
-                //token.asInstanceOf[GoogleToken]
-                //new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token)
                 complete(token)
               }
               case Failure(ex) => {
                 println("Failure : " + ex.toString())
-                //val ftkn = new NDApiResponse[GoogleToken](ErrorStatus.NotAutorized, ex.toString(), new GoogleToken("",0,"","",""))
-                //ftkn
-                //null
-                //new NDApiResponse[GoogleToken](ErrorStatus.NotAutorized, ex.toString(), new GoogleToken("",0,"","",""))
                 complete(null)
               }
-
             }
-            //.asInstanceOf[NDApiResponse[GoogleToken]]
-
-          //val response =  result.asInstanceOf[GoogleToken]
-
-          //println("result: " + response.toString())
-          //complete(response)
-
-            /*
-            Null => {
-              val result2 = new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
-              complete(result2)
-            }
-            */
         }
       }
     }
