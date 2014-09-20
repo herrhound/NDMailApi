@@ -171,11 +171,9 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     val raw = "grant_type=" + grant_type.toString() + "&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
     val entity = HttpEntity(ContentType(MediaTypes.`application/x-www-form-urlencoded`), raw)
 
-    val response: Future[GoogleToken] = pipeline{
+    pipeline{
       Post("https://accounts.google.com/o/oauth2/token").withEntity(entity)
     }
-
-    response
   }
 
 }
