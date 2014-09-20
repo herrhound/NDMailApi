@@ -87,12 +87,12 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
                 //println("Failure : " + ex.toString())
                 //val ftkn = new NDApiResponse[GoogleToken](ErrorStatus.NotAutorized, ex.toString(), new GoogleToken("",0,"","",""))
                 //ftkn
-                complete(null)
+                complete(new GoogleToken("",0,"","",""))
               }
 
-            } //.asInstanceOf[NDApiResponse[GoogleToken]]
+            }//.asInstanceOf[NDApiResponse[GoogleToken]]
 
-            println("result: " + result.toString())
+            //println("result: " + result.toString())
             complete(result.asInstanceOf[GoogleToken])
             //complete("Hello!")
 

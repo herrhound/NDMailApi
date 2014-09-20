@@ -162,7 +162,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     implicit val system = ActorSystem()
     import scala.concurrent.ExecutionContext.Implicits.global
 
-    val pipeline = (
+    val pipeline: HttpRequest => Future[GoogleToken] = (
         encode(Gzip)
         ~> sendReceive
         ~> decode(Deflate)
