@@ -14,6 +14,7 @@ import models.NDApiResponse
 import models.ndapidtos.DeviceRegisterModel
 import models.OAuth2CallbackModel
 import scala.util.{ Success, Failure }
+import spray.http.HttpEntity
 
 /**
  * Created by nikolatonkev on 2014-05-20.
@@ -71,31 +72,40 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
   path("oauth2callback") {
     get {
       parameter("code") {
-        code =>
-          {
-            val future = GetGoogleAccessToken(code)
+        code => {
+          //complete("Hello: " + code.toString())
 
-            code => future onComplete{
-                case Success(token) => complete (NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token))
-                case Failure(ex) => complete (NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString()))
-            }
-                /*
-        { GetGoogleAccessToken(code).onComplete {
-                  case Success(token) => {
-                    println("Google access token : " + token)
-                    complete(NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token))
-                  }
-                  case Failure(ex) => {
-                    println("Failure : " + ex.toString())
-                    complete(NDApiResponse[String](ErrorStatus.NotAutorized, "Authorization error!", ex.toString()))
-                  }
-                }
+
+          val result = GetGoogleAccessToken(code).onComplete {
+              case Success(token) => {
+                println("Success : " + token)
+                //val stkn = new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token)
+                //stkn
+                //complete(token.asInstanceOf[GoogleToken])
+                token.asInstanceOf[GoogleToken]
               }
-            //Null => val result = new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
-            */
-         }
-            }
-          }
-        }
+              case Failure(ex) => {
+                println("Failure : " + ex.toString())
+                //val ftkn = new NDApiResponse[GoogleToken](ErrorStatus.NotAutorized, ex.toString(), new GoogleToken("",0,"","",""))
+                //ftkn
+                null
+              }
 
+            }
+            //.asInstanceOf[NDApiResponse[GoogleToken]]
+
+            println("result: " + result.toString())
+            complete(result.asInstanceOf[GoogleToken])
+            //complete("Hello!")
+
+            /*
+            Null => {
+              val result2 = new NDApiResponse[String](ErrorStatus.NotAuthenticated, "Not authenticated", "")
+              complete(result2)
+            }
+            */
+        }
+      }
+    }
+  }
 }

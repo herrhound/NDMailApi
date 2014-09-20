@@ -162,7 +162,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     implicit val system = ActorSystem()
     import scala.concurrent.ExecutionContext.Implicits.global
 
-    val pipeline = (
+    val pipeline: HttpRequest => Future[GoogleToken] = (
         encode(Gzip)
         ~> sendReceive
         ~> decode(Deflate)
@@ -171,9 +171,11 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     val raw = "grant_type=" + grant_type.toString() + "&code=" + code.toString()+ "&client_id=" + client_id.toString()+ "&client_secret=" + client_secret.toString()+ "&redirect_uri=" + redirect_uri.toString()
     val entity = HttpEntity(ContentType(MediaTypes.`application/x-www-form-urlencoded`), raw)
 
-    pipeline{
+    val response: Future[GoogleToken] = pipeline{
       Post("https://accounts.google.com/o/oauth2/token").withEntity(entity)
     }
+
+    response
   }
 
 }
