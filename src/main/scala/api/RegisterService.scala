@@ -82,15 +82,15 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
                 //val stkn = new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token)
                 //stkn
                 //complete(token.asInstanceOf[GoogleToken])
-                //token.asInstanceOf[GoogleToken]
-                new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token)
+                token.asInstanceOf[GoogleToken]
+                //new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token)
               }
               case Failure(ex) => {
                 println("Failure : " + ex.toString())
                 //val ftkn = new NDApiResponse[GoogleToken](ErrorStatus.NotAutorized, ex.toString(), new GoogleToken("",0,"","",""))
                 //ftkn
-                //null
-                new NDApiResponse[GoogleToken](ErrorStatus.NotAutorized, ex.toString(), new GoogleToken("",0,"","",""))
+                null
+                //new NDApiResponse[GoogleToken](ErrorStatus.NotAutorized, ex.toString(), new GoogleToken("",0,"","",""))
               }
 
             }
