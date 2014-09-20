@@ -76,23 +76,24 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
           //complete("Hello: " + code.toString())
 
 
-            val result = GetGoogleAccessToken(code).onComplete {
+          val result = GetGoogleAccessToken(code).onComplete {
               case Success(token) => {
                 //println("Success : " + token)
                 //val stkn = new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token)
                 //stkn
-                complete(token)
+                complete(token.asInstanceOf[GoogleToken])
               }
               case Failure(ex) => {
                 //println("Failure : " + ex.toString())
                 //val ftkn = new NDApiResponse[GoogleToken](ErrorStatus.NotAutorized, ex.toString(), new GoogleToken("",0,"","",""))
                 //ftkn
-                complete(new GoogleToken("",0,"","",""))
+                null
               }
 
-            }//.asInstanceOf[NDApiResponse[GoogleToken]]
+            }
+            //.asInstanceOf[NDApiResponse[GoogleToken]]
 
-            //println("result: " + result.toString())
+            println("result: " + result.toString())
             complete(result.asInstanceOf[GoogleToken])
             //complete("Hello!")
 
