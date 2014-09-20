@@ -81,8 +81,8 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
                 println("Success : " + token)
                 //val stkn = new NDApiResponse[GoogleToken](ErrorStatus.None, "Authenticated", token)
                 //stkn
-                //complete(token.asInstanceOf[GoogleToken])
-                token.asInstanceOf[GoogleToken]
+                complete(token.asInstanceOf[GoogleToken])
+                //token.asInstanceOf[GoogleToken]
               }
               case Failure(ex) => {
                 println("Failure : " + ex.toString())
