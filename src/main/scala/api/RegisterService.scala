@@ -43,32 +43,34 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
   //http PUT http://dry-atoll-6423.herokuapp.com/register < register.json
   //http PUT http://dry-atoll-6423.herokuapp.com/registeruser < registeruser.json
   val route =
-/*    path("registeruser") {
-      entity(as[UserRegisterDTO]) { ent =>
-        post {
-          complete {
-            RegisterUser(system, ent)
-            //new NDApiResponse[String](ErrorStatus.None, "", RegisterUser(system, ent))
-          }
-        }
-      }
-    } ~
-    path("registerdevice") {
-      entity(as[DeviceRegisterModel]) { ent =>
-        post {
-          complete {
-            val authguid = RegisterDevice(system, ent)
-            if(authguid !=  "") {
-              new NDApiResponse[String](ErrorStatus.None, "", authguid.toString())
-            }
-            else {
-              new NDApiResponse[String](ErrorStatus.None, "", "")
+    path("registeruser") {
+      post {
+        parameter("access_token") {
+          access_token => {
+            onComplete(GetGoogleUserInfo(access_token)) {
+              case Success(token) => {
+                println("Succsess : " + token)
+                complete(token)
+              }
+              case Failure(ex) => {
+                println("Failure : " + ex.toString())
+                complete(null)
+              }
             }
           }
         }
+        /*
+        entity(as[UserRegisterDTO]) { ent =>
+          post {
+            complete {
+              RegisterUser(system, ent)
+              //new NDApiResponse[String](ErrorStatus.None, "", RegisterUser(system, ent))
+            }
+          }
+        }
+        */
       }
-    } ~*/
-
+  }~
   path("oauth2callback") {
     get {
       parameter("code") {

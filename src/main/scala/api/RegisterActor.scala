@@ -152,8 +152,6 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
 
   def GetGoogleAccessToken(code: String) : Future[GoogleToken] = {
 
-    //println(code)
-
     val client_id = "783241267105-bc7pq09tr1nnogat72r9tgmaeg2mre28.apps.googleusercontent.com"
     val client_secret = "xhcDpKvdxzVwb3-Dt_fNQWze"
     val redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
@@ -173,6 +171,23 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
 
     pipeline{
       Post("https://accounts.google.com/o/oauth2/token").withEntity(entity)
+    }
+  }
+
+  def GetGoogleUserInfo(access_token: String) : Future[GoogleUserInfo] = {
+    implicit val system = ActorSystem()
+    import scala.concurrent.ExecutionContext.Implicits.global
+
+    val pipleine: HttpRequest => Future[GoogleUserInfo] = (
+        encode(Gzip)
+      ~> sendReceive
+      ~> decode(Deflate)
+      ~> unmarshal[GoogleUserInfo]
+      )
+    val raw = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + access_token
+
+    pipleine{
+      Get(raw)
     }
   }
 
