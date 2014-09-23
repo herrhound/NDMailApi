@@ -11,7 +11,8 @@ import com.github.tototoshi.slick.PostgresJodaSupport._
  */
 
 class UserTable(tag: Tag) extends Table[User](tag, Some("auth"), "user") {
-  def * = (userid, username, email.?, token.?, tokenexpirydate.?, Id.?, verifiedemail.?, givenname.?, surname.?, link.?, picture.?, gender.?, applicationId.?) <> (User.tupled, User.unapply)
+  def * = (userid, username, email.?, token.?, tokenexpirydate.?, Id.?, verifiedemail.?, givenname.?, surname.?, link.?,
+    picture.?, gender.?, applicationId.?) <> (User.tupled, User.unapply)
   /*secretquestion.?, secretanswer.?, userpassword, */
 
   val userid: Column[UUID] = column[UUID]("user_id")

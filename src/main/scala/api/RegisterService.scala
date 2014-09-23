@@ -50,6 +50,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
             onComplete(GetGoogleUserInfo(access_token)) {
               case Success(token) => {
                 println("Succsess : " + token)
+                RegisterUser(system,token)
                 complete(token)
               }
               case Failure(ex) => {

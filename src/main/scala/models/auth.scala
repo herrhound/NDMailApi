@@ -14,3 +14,5 @@ case class UserDevice (userdevicesid: Option[Int] = None, userid: UUID, deviceid
 
 case class Device (deviceid: UUID, userid: UUID, deviceuniqueid: String, devicetype: Option[String])
 
+case class UserInfo(id: String, family_name: Option[String], gender: Option[String], given_name: Option[String],
+                 link: Option[String], locale: Option[String], name: Option[String], picture: Option[String])

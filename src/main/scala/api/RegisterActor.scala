@@ -14,7 +14,7 @@ import scala.util.{Failure, Success}
 import spray.http._
 import models.ndapidtos.UserRegisterDTO
 import models.NDApiResponse
-import models.auth.User
+import models.auth.{User, UserInfo}
 import models.GoogleJsonProtocol.GoogleToken
 import models.ndapidtos.DeviceRegisterModel
 import models.auth.UserDevice
@@ -122,23 +122,22 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
       val database = dao.GetDataBase(system)
       val user: Option[User] = GetUserByEmail(model.email, database)
 
-      if(!user.equals(None)){
+      if (!user.equals(None)) {
         val userid: UUID = user.get.userid
         val deviceid = java.util.UUID.fromString(model.deviceUniqueId)
 
         val mapping = GetUserDeviceMapping(userid, deviceid, database)
-        if(mapping.equals(None)){
+        if (mapping.equals(None)) {
           val authguidId = GetNewUUID
           val userdevice = new UserDevice(None, userid, deviceid, authguidId, None)
-          database.withSession { session => UserDevicesDAL.insert(userdevice)(session) }
+          database.withSession { session => UserDevicesDAL.insert(userdevice)(session)}
           authguidId.toString()
         }
         else {
           mapping.get.authguid.toString()
         }
       }
-      else
-      {
+      else {
         ""
       }
     }
@@ -146,7 +145,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
       case e: Exception => {
         errorLogger.error(e.getStackTraceString)
       }
-      ""
+        ""
     }
   }
 
@@ -188,6 +187,29 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
 
     pipleine{
       Get(raw)
+    }
+  }
+
+  def RegisterUser(system: ActorSystem, ui: GoogleUserInfo) = {
+    try {
+      val database = dao.GetDataBase(system)
+
+      val user: Option[UserInfo] = database.withSession {
+        val dal = UserInfoDAL
+        session => dal.findById(ui.id)(session)
+      }
+
+      if(user.equals(None)) {
+        val newUser : UserInfo = new UserInfo(ui.id, Some(ui.family_name), Some(ui.gender),
+          Some(ui.given_name), Some(ui.link), Some(ui.locale), Some(ui.name), Some(ui.picture))
+        database.withSession { session => UserInfoDAL.insert(newUser)(session)}
+      }
+    }
+    catch {
+      case e: Exception => {
+        errorLogger.error(e.getStackTraceString)
+      }
+        ""
     }
   }
 

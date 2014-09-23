@@ -21,4 +21,3 @@ object GoogleJsonProtocol extends Json4sSupport {
                             locale: String, name: String, picture: String)
 
 }
-
