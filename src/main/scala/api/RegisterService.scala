@@ -14,7 +14,6 @@ import models.NDApiResponse
 import models.ndapidtos.DeviceRegisterModel
 import models.OAuth2CallbackModel
 import scala.util.{ Success, Failure }
-import spray.http.HttpEntity
 
 /**
  * Created by nikolatonkev on 2014-05-20.
@@ -34,7 +33,6 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
 
   implicit val OAuth2CallbackSuccessFormater = jsonFormat3(NDApiResponse[GoogleToken])
   implicit val OAuth2CallbackFailureFormater = jsonFormat3(NDApiResponse[String])
-  import spray.httpx.encoding._
 
   //http PUT http://localhost:8080/registeruser < registeruser.json
   //http PUT http://localhost:8080/registerdevice < registerdevice.json
@@ -60,16 +58,6 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
             }
           }
         }
-        /*
-        entity(as[UserRegisterDTO]) { ent =>
-          post {
-            complete {
-              RegisterUser(system, ent)
-              //new NDApiResponse[String](ErrorStatus.None, "", RegisterUser(system, ent))
-            }
-          }
-        }
-        */
       }
   }~
   path("oauth2callback") {
@@ -79,6 +67,17 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
             onComplete(GetGoogleAccessToken(code)) {
               case Success(token) => {
                 println("Success : " + token)
+                onComplete(GetGoogleUserInfo(token.access_token)) {
+                  case Success(ui_token) => {
+                    println("Succsess : " + ui_token)
+                    RegisterUser(system, ui_token)
+                    complete(ui_token)
+                  }
+                  case Failure(ex) => {
+                    println("Failure : " + ex.toString())
+                    complete(null)
+                  }
+                }
                 complete(token)
               }
               case Failure(ex) => {

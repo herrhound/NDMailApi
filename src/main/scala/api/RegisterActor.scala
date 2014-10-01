@@ -66,7 +66,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     mpng
 
   }
-
+/*
   def RegisterUser(system: ActorSystem, model: UserRegisterDTO): NDApiResponse[String] = {
     val database = dao.GetDataBase(system)
     if (UserExist(model.email.get, database)){
@@ -91,7 +91,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
       }
     }
   }
-
+*/
   def RegisterDevice(system: ActorSystem, model: DeviceRegisterModel): String = {
     try {
       val database = dao.GetDataBase(system)
@@ -222,7 +222,7 @@ class RegisterActor extends Actor {
   val system = ActorSystem()
   def receive = {
     case (model: DeviceRegisterModel) => sender ! RegisterDevice(system, model)
-    case (model: UserRegisterDTO) => sender ! RegisterUser(system, model)
+    //case (model: UserRegisterDTO) => sender ! RegisterUser(system, model)
     case (code: String) => sender ! GetGoogleAccessToken(code)
   }
 
