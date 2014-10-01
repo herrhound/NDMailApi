@@ -60,6 +60,17 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
         }
       }
   }~
+  path("getuserinfo") {
+    get {
+      parameter("access_token") {
+        access_token => {
+          val gui:GoogleUserInfo = GetUserInfo(system,access_token)
+          println("UserInfo retrieved : " + gui.id)
+          complete(gui)
+          }
+        }
+      }
+    }~
   path("oauth2callback") {
     get {
       parameter("code") {

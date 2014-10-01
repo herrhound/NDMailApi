@@ -14,7 +14,7 @@ import scala.util.{Failure, Success}
 import spray.http._
 import models.ndapidtos.UserRegisterDTO
 import models.NDApiResponse
-import models.auth.{User, UserInfo}
+import models.auth.{User, UserInfo, GoogleTokenInfo}
 import models.GoogleJsonProtocol.GoogleToken
 import models.ndapidtos.DeviceRegisterModel
 import models.auth.UserDevice
@@ -194,14 +194,14 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     try {
       val database = dao.GetDataBase(system)
 
-      val user: Option[UserInfo] = database.withSession {
+      val user: Option[GoogleUserInfo] = database.withSession {
         val dal = UserInfoDAL
         session => dal.findById(ui.id)(session)
       }
 
       if(user.equals(None)) {
-        val newUser : UserInfo = new UserInfo(ui.id, Some(ui.family_name), Some(ui.gender),
-          Some(ui.given_name), Some(ui.link), Some(ui.locale), Some(ui.name), Some(ui.picture))
+        val newUser : GoogleUserInfo = new GoogleUserInfo(ui.id, ui.family_name, ui.gender,
+          ui.given_name, ui.link, ui.locale, ui.name, ui.picture)
         database.withSession { session => UserInfoDAL.insert(newUser)(session)}
       }
     }
@@ -210,6 +210,39 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
         errorLogger.error(e.getStackTraceString)
       }
         ""
+    }
+  }
+
+
+
+  def GetUserInfo(system: ActorSystem, access_token: String) : GoogleUserInfo = {
+    try {
+      val database = dao.GetDataBase(system)
+
+      val token: Option[GoogleTokenInfo] = database.withSession {
+        val dal = GoogleTokenDAL
+        session => dal.findByAccessToken(access_token)(session)
+      }
+
+      if(!token.equals(None)) {
+        val user: Option[GoogleUserInfo] = database.withSession {
+          val dal = UserInfoDAL
+          session => dal.findById(token.get.userinfo_id)(session)
+        }
+
+      val u: GoogleUserInfo = new GoogleUserInfo("1","1","1","1","1","1","1","1")
+      user.getOrElse(u)
+      }
+      else
+      {
+        new GoogleUserInfo("1","1","1","1","1","1","1","1")
+      }
+    }
+    catch {
+      case e: Exception => {
+        errorLogger.error(e.getStackTraceString)
+      }
+        new GoogleUserInfo("1","1","1","1","1","1","1","1")
     }
   }
 

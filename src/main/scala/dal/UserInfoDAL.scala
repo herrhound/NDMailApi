@@ -11,8 +11,8 @@ import com.github.tototoshi.slick.PostgresJodaSupport._
  * Created by moral10 on 14-09-22.
  */
 
-class UserInfoTable(tag: Tag) extends Table[UserInfo](tag, Some("auth"), "userinfo") {
-  def * = (id, family_name.?, gender.?, given_name.?, link.?, locale.?, name.?, picture.?) <> (UserInfo.tupled, UserInfo.unapply)
+class UserInfoTable(tag: Tag) extends Table[GoogleUserInfo](tag, Some("auth"), "userinfo") {
+  def * = (id, family_name, gender, given_name, link, locale, name, picture) <> (GoogleUserInfo.tupled, GoogleUserInfo.unapply)
 
   val id: Column[String] = column[String]("id")
   val family_name: Column[String] = column[String]("family_name")
@@ -27,15 +27,15 @@ class UserInfoTable(tag: Tag) extends Table[UserInfo](tag, Some("auth"), "userin
 trait UserInfos {
   //this: Profile =>
 
-  def findByName(name: String)(implicit s: Session): Option[UserInfo]
+  def findByName(name: String)(implicit s: Session): Option[GoogleUserInfo]
 
-  def findById(id: String)(implicit s: Session): Option[UserInfo]
+  def findById(id: String)(implicit s: Session): Option[GoogleUserInfo]
 
-  def insert(u : UserInfo)(implicit s: Session)
+  def insert(u : GoogleUserInfo)(implicit s: Session)
 
   def delete(id: String)(implicit s: Session)
 
-  def update(id: String, u: UserInfo)(implicit s: Session)
+  def update(id: String, u: GoogleUserInfo)(implicit s: Session)
 
   def count(filter: String)(implicit s: Session): Int
 }
@@ -45,15 +45,15 @@ object UserInfoDAL extends UserInfos {
 
   val users = TableQuery[UserInfoTable]
 
-  def findByName(name: String)(implicit s: Session): Option[UserInfo] = {
+  def findByName(name: String)(implicit s: Session): Option[GoogleUserInfo] = {
     users.where(_.name === name).firstOption
   }
 
-  def findById(id: String)(implicit s: Session): Option[UserInfo] = {
+  def findById(id: String)(implicit s: Session): Option[GoogleUserInfo] = {
     users.where(_.id === id).firstOption
   }
 
-  def insert(u : UserInfo)(implicit s: Session) {
+  def insert(u : GoogleUserInfo)(implicit s: Session) {
     users.insert(u)
   }
 
@@ -61,7 +61,7 @@ object UserInfoDAL extends UserInfos {
     users.where(_.id === id).delete
   }
 
-  def update(id: String, u: UserInfo)(implicit s: Session) {
+  def update(id: String, u: GoogleUserInfo)(implicit s: Session) {
     users.where(_.id === id).update(u)
   }
 
