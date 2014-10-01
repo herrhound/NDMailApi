@@ -66,19 +66,19 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
         code => {
             onComplete(GetGoogleAccessToken(code)) {
               case Success(token) => {
-                println("Success : " + token)
+                println("OAuth2Callback success: " + token)
                 onComplete(GetGoogleUserInfo(token.access_token)) {
                   case Success(ui_token) => {
-                    println("Succsess : " + ui_token)
+                    println("GoogleUserInfo succsess : " + ui_token)
                     RegisterUser(system, ui_token)
-                    complete(ui_token)
+                    complete(token)
                   }
                   case Failure(ex) => {
                     println("Failure : " + ex.toString())
                     complete(null)
                   }
                 }
-                complete(token)
+                //complete(token)
               }
               case Failure(ex) => {
                 println("Failure : " + ex.toString())
