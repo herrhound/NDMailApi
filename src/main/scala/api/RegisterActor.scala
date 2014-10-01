@@ -12,14 +12,12 @@ import spray.httpx.encoding.{Deflate, Gzip}
 import models.GoogleJsonProtocol._
 import scala.util.{Failure, Success}
 import spray.http._
-import models.ndapidtos.UserRegisterDTO
-import models.NDApiResponse
 import models.auth.{User, UserInfo, GoogleTokenInfo}
 import models.GoogleJsonProtocol.GoogleToken
 import models.ndapidtos.DeviceRegisterModel
 import models.auth.UserDevice
 import spray.client.pipelining._
-
+import org.joda.time._
 
 /**
  * Created by nikolatonkev on 2014-05-20.
@@ -190,7 +188,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     }
   }
 
-  def RegisterUser(system: ActorSystem, ui: GoogleUserInfo) = {
+  def RegisterUser(system: ActorSystem, token: GoogleToken, ui: GoogleUserInfo) = {
     try {
       val database = dao.GetDataBase(system)
 
@@ -199,10 +197,16 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
         session => dal.findById(ui.id)(session)
       }
 
+      val gtDAL = GoogleTokenDAL
+
       if(user.equals(None)) {
         val newUser : GoogleUserInfo = new GoogleUserInfo(ui.id, ui.family_name, ui.gender,
           ui.given_name, ui.link, ui.locale, ui.name, ui.picture)
         database.withSession { session => UserInfoDAL.insert(newUser)(session)}
+
+        val gti = new GoogleTokenInfo (token.access_token, token.expires_in,
+        token.id_token, token.refresh_token, token.token_type, user.get.id, org.joda.time.DateTime.now)
+        database.withSession { session => gtDAL.insert(gti)(session)}
       }
     }
     catch {
