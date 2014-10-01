@@ -197,15 +197,20 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
         session => dal.findById(ui.id)(session)
       }
 
-      val gtDAL = GoogleTokenDAL
-
       if(user.equals(None)) {
+
+        println("Registering user...")
+
         val newUser : GoogleUserInfo = new GoogleUserInfo(ui.id, ui.family_name, ui.gender,
           ui.given_name, ui.link, ui.locale, ui.name, ui.picture)
         database.withSession { session => UserInfoDAL.insert(newUser)(session)}
 
+        val gtDAL = GoogleTokenDAL
+
+        println("Registering googletoken...")
+
         val gti = new GoogleTokenInfo (token.access_token, token.expires_in,
-        token.id_token, token.refresh_token, token.token_type, user.get.id, org.joda.time.DateTime.now)
+        token.id_token, token.refresh_token, token.token_type, ui.id, org.joda.time.DateTime.now)
         database.withSession { session => gtDAL.insert(gti)(session)}
       }
     }
