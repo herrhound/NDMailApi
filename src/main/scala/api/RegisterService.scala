@@ -41,6 +41,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
   //http PUT http://dry-atoll-6423.herokuapp.com/register < register.json
   //http PUT http://dry-atoll-6423.herokuapp.com/registeruser < registeruser.json
   val route =
+  /*
     path("registeruser") {
       post {
         parameter("access_token") {
@@ -59,7 +60,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
           }
         }
       }
-  }~
+  }~*/
   path("getuserinfo") {
     get {
       parameter("access_token") {
@@ -81,7 +82,7 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
                 onComplete(GetGoogleUserInfo(token.access_token)) {
                   case Success(ui_token) => {
                     println("GoogleUserInfo succsess : " + ui_token)
-                    RegisterUser(system, ui_token)
+                    RegisterUser(system, token, ui_token)
                     complete(token)
                   }
                   case Failure(ex) => {
