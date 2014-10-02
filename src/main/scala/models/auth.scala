@@ -14,8 +14,8 @@ case class UserDevice (userdevicesid: Option[Int] = None, userid: UUID, deviceid
 
 case class Device (deviceid: UUID, userid: UUID, deviceuniqueid: String, devicetype: Option[String])
 
-case class UserInfo(id: String, family_name: Option[String], gender: Option[String], given_name: Option[String],
+case class UserInfoModel(id: String, family_name: Option[String], gender: Option[String], given_name: Option[String],
                  link: Option[String], locale: Option[String], name: Option[String], picture: Option[String])
 
-case class GoogleTokenInfo(access_token: String, expires_in:Int, id_token:String, refresh_token:String,
+case class GoogleTokenModel(access_token: String, expires_in:Int, id_token:String, refresh_token:String,
                            token_type:String, userinfo_id:String, issued_on:DateTime)

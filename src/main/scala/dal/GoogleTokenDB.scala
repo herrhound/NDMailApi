@@ -11,9 +11,9 @@ import com.github.tototoshi.slick.PostgresJodaSupport._
  * Created by moral10 on 14-09-22.
  */
 
-class GoogleTokenTable(tag: Tag) extends Table[GoogleTokenInfo](tag, Some("auth"), "googletoken") {
+class GoogleTokenTable(tag: Tag) extends Table[GoogleTokenModel](tag, Some("auth"), "googletoken") {
   def * = (access_token, expires_in, id_token, refresh_token, token_type, userinfo_id, issued_on) <>
-    (GoogleTokenInfo.tupled, GoogleTokenInfo.unapply)
+    (GoogleTokenModel.tupled, GoogleTokenModel.unapply)
 
   val access_token: Column[String] = column[String]("access_token")
   val expires_in: Column[Int] = column[Int]("expires_in")
@@ -27,15 +27,15 @@ class GoogleTokenTable(tag: Tag) extends Table[GoogleTokenInfo](tag, Some("auth"
 trait GoogleTokens {
   //this: Profile =>
 
-  def findByAccessToken(access_token: String)(implicit s: Session): Option[GoogleTokenInfo]
+  def findByAccessToken(access_token: String)(implicit s: Session): Option[GoogleTokenModel]
 
-  def findById(userinfo_id: String)(implicit s: Session): Option[GoogleTokenInfo]
+  def findById(userinfo_id: String)(implicit s: Session): Option[GoogleTokenModel]
 
-  def insert(token : GoogleTokenInfo)(implicit s: Session)
+  def insert(token : GoogleTokenModel)(implicit s: Session)
 
   def delete(access_token: String)(implicit s: Session)
 
-  def update(access_token: String, token: GoogleTokenInfo)(implicit s: Session)
+  def update(access_token: String, token: GoogleTokenModel)(implicit s: Session)
 
   def count(filter: String)(implicit s: Session): Int
 }
@@ -45,15 +45,15 @@ object GoogleTokenDAL extends GoogleTokens {
 
   val gt = TableQuery[GoogleTokenTable]
 
-  def findByAccessToken(access_token: String)(implicit s: Session): Option[GoogleTokenInfo] = {
+  def findByAccessToken(access_token: String)(implicit s: Session): Option[GoogleTokenModel] = {
     gt.where(_.access_token === access_token).firstOption
   }
 
-  def findById(userinfo_id: String)(implicit s: Session): Option[GoogleTokenInfo] = {
+  def findById(userinfo_id: String)(implicit s: Session): Option[GoogleTokenModel] = {
     gt.where(_.userinfo_id === userinfo_id).firstOption
   }
 
-  def insert(u : GoogleTokenInfo)(implicit s: Session) {
+  def insert(u : GoogleTokenModel)(implicit s: Session) {
     gt.insert(u)
   }
 
@@ -61,7 +61,7 @@ object GoogleTokenDAL extends GoogleTokens {
     gt.where(_.access_token === access_token).delete
   }
 
-  def update(access_token: String, token: GoogleTokenInfo)(implicit s: Session) {
+  def update(access_token: String, token: GoogleTokenModel)(implicit s: Session) {
     gt.where(_.access_token === access_token).update(token)
   }
 

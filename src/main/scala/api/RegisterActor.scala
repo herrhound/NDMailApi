@@ -1,6 +1,7 @@
 package api
 
 import akka.actor.{ActorRef, ActorSystem, Actor}
+import com.sun.xml.internal.bind.v2.TODO
 import utils.{NDApiLogging}
 import models.{GoogleJsonProtocol, ErrorStatus, NDApiResponse}
 import scala.slick.driver.PostgresDriver.simple._
@@ -12,7 +13,7 @@ import spray.httpx.encoding.{Deflate, Gzip}
 import models.GoogleJsonProtocol._
 import scala.util.{Failure, Success}
 import spray.http._
-import models.auth.{User, UserInfo, GoogleTokenInfo}
+import models.auth.{User, UserInfoModel, GoogleTokenModel}
 import models.GoogleJsonProtocol.GoogleToken
 import models.ndapidtos.DeviceRegisterModel
 import models.auth.UserDevice
@@ -188,6 +189,56 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     }
   }
 
+  def UpdateGoogleToken(system: ActorSystem, access_token: String) = {
+    import scala.util.{Success, Failure}
+    import scala.concurrent.ExecutionContext.Implicits.global
+
+    GetNewGoogleToken(access_token) onComplete {
+      case Success(newtoken) => {
+        val database = dao.GetDataBase(system)
+
+        val oldtoken: Option[GoogleTokenModel] = database.withSession {
+          val dal = GoogleTokenDAL
+          session => dal.findByAccessToken(access_token)(session)
+        }
+
+        val updatedtoken = new GoogleTokenModel(newtoken.access_token, newtoken.expires_in, oldtoken.get.id_token,
+          oldtoken.get.refresh_token, newtoken.token_type, oldtoken.get.userinfo_id, org.joda.time.DateTime.now)
+
+        database.withSession {
+          session => GoogleTokenDAL.update(access_token, updatedtoken)(session)
+        }
+      }
+      case Failure(ex) => ex.getMessage()
+    }
+  }
+
+  def GetNewGoogleToken(refresh_token: String) : Future[GoogleRefreshTokenResponse] = {
+    implicit val system = ActorSystem()
+    import scala.concurrent.ExecutionContext.Implicits.global
+
+    //TODO: externalize client_id, client_secret, redirect_uri and grant_type
+    val client_id = "783241267105-bc7pq09tr1nnogat72r9tgmaeg2mre28.apps.googleusercontent.com"
+    val client_secret = "xhcDpKvdxzVwb3-Dt_fNQWze"
+    val redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
+    val grant_type = "refresh_token"
+
+    val pipeline: HttpRequest => Future[GoogleRefreshTokenResponse] = (
+        encode(Gzip)
+      ~>sendReceive
+      ~>decode(Deflate)
+      ~>unmarshal[GoogleRefreshTokenResponse]
+      )
+
+    val raw = "refresh_token=" + refresh_token.toString() + "&client_id=" + client_id.toString()+
+      "&client_secret=" + client_secret.toString() + "&grant_type=" + grant_type.toString()
+    val entity = HttpEntity(ContentType(MediaTypes.`application/x-www-form-urlencoded`), raw)
+
+    pipeline{
+      Post("https://accounts.google.com/o/oauth2/token").withEntity(entity)
+    }
+  }
+
   def RegisterUser(system: ActorSystem, token: GoogleToken, ui: GoogleUserInfo) = {
     try {
       val database = dao.GetDataBase(system)
@@ -209,7 +260,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
 
         println("Registering googletoken...")
 
-        val gti = new GoogleTokenInfo (token.access_token, token.expires_in,
+        val gti = new GoogleTokenModel (token.access_token, token.expires_in,
         token.id_token, token.refresh_token, token.token_type, ui.id, org.joda.time.DateTime.now)
         database.withSession { session => gtDAL.insert(gti)(session)}
       }
@@ -228,7 +279,7 @@ object RegisterActor extends NDApiLogging with NDApiUtil with  DefaultJsonFormat
     try {
       val database = dao.GetDataBase(system)
 
-      val token: Option[GoogleTokenInfo] = database.withSession {
+      val token: Option[GoogleTokenModel] = database.withSession {
         val dal = GoogleTokenDAL
         session => dal.findByAccessToken(access_token)(session)
       }
