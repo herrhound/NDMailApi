@@ -61,6 +61,11 @@ class RegisterService(system: ActorSystem, registering: ActorRef)(implicit conte
         }
       }
   }~*/
+  path("provisionOAuth2IDs"){
+    get {
+      complete(new OAuth2IDs("783241267105-s1si6l0t9h1dat18gih2j5bphg7st307.apps.googleusercontent.com","783241267105-bc7pq09tr1nnogat72r9tgmaeg2mre28.apps.googleusercontent.com"))
+    }
+  }
   path("getuserinfo") {
     get {
       parameter("access_token") {

@@ -21,4 +21,6 @@ object GoogleJsonProtocol extends Json4sSupport {
   case class GoogleRefreshTokenRequest(refresh_token: String, client_id: String, client_secret: String, grant_type: String)
 
   case class GoogleRefreshTokenResponse(access_token: String, expires_in: Int, token_type: String)
+
+  case class OAuth2IDs(client_id: String, server_id: String)
 }
